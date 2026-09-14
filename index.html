@@ -1,0 +1,3014 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>农丰保 · 气象监测平台（铜川苹果）</title>
+<style>
+:root{
+  --page-bg:#f4f7f6;
+  --ink:#10231c;
+  --muted:#64756d;
+  --forest:#08372a;
+  --leaf:#147a55;
+  --sky:#0f6fbf;
+  --gold:#d99a2b;
+  --card:#ffffff;
+  --line:#e1eae5;
+  --line-strong:#c8d8d0;
+  --green:#16a34a;
+  --yellow:#f59e0b;
+  --red:#dc2626;
+  --radius:16px;
+  --shadow:0 10px 30px rgba(10,40,30,.07);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--page-bg);color:var(--ink);
+  font-family:"Noto Sans SC","Microsoft YaHei UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  font-size:16px;line-height:1.62;-webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:.2px}
+p{margin:0}
+
+/* ---------- 顶栏 ---------- */
+.topbar{position:sticky;top:0;z-index:60;background:linear-gradient(100deg,#062e23,#0b4a38 55%,#0d5c44);color:#fff}
+.topbar-inner{max-width:1500px;margin:0 auto;min-height:68px;display:flex;align-items:center;gap:14px;padding:8px 22px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-mark{width:42px;height:42px;border-radius:13px;background:rgba(255,255,255,.14);display:grid;place-items:center;flex:none}
+.brand-name{font-size:19px;font-weight:800;letter-spacing:.4px}
+.brand-sub{font-size:12.5px;color:#b7e2d0;margin-top:1px}
+.badge-demo{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:999px;background:rgba(220,38,38,.22);border:1px solid rgba(255,190,190,.4);color:#ffe3e3;font-size:13px;font-weight:700}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.role-switch{display:flex;gap:4px;background:rgba(255,255,255,.1);padding:4px;border-radius:13px}
+.role-switch button{
+  border:0;background:transparent;color:#d8f0e6;font-family:inherit;font-size:13.5px;font-weight:700;
+  padding:7px 12px;border-radius:10px;cursor:pointer;transition:background .16s ease;
+}
+.role-switch button:hover{background:rgba(255,255,255,.14)}
+.role-switch button[aria-pressed="true"]{background:#fff;color:var(--forest)}
+
+/* ---------- 导航 ---------- */
+.navbar{position:sticky;top:68px;z-index:50;background:#fff;border-bottom:1px solid var(--line)}
+.navbar-inner{max-width:1500px;margin:0 auto;display:flex;align-items:center;gap:2px;padding:0 22px;overflow-x:auto}
+.nav-link{position:relative;padding:15px 14px 13px;font-weight:700;font-size:15px;color:#7d8f87;border-bottom:3px solid transparent;white-space:nowrap;transition:color .16s ease}
+.nav-link:hover{color:var(--leaf)}
+.nav-link.active{color:var(--leaf);border-bottom-color:var(--leaf)}
+.nav-sep{width:1px;height:22px;background:var(--line);margin:0 10px;flex:none}
+.nav-group{font-size:12.5px;font-weight:800;color:#9aa9a2;letter-spacing:.14em;padding-right:2px;white-space:nowrap}
+.nav-group-link{
+  display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:800;color:#7b8c84;
+  letter-spacing:.12em;padding:15px 10px 13px;border-bottom:3px solid transparent;white-space:nowrap;
+  border-radius:8px 8px 0 0;transition:color .16s ease,background .16s ease;
+}
+.nav-group-link::after{content:"›";font-size:14px;line-height:1;opacity:.7}
+.nav-group-link:hover{color:var(--leaf);background:#f2faf6}
+.nav-group-link:focus-visible{outline:3px solid rgb(43 138 98 / 35%);outline-offset:-2px}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:1500px;margin:0 auto;padding:20px 22px 40px}
+.page-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.page-title{font-size:27px}
+.page-desc{color:var(--muted);font-size:14.5px;max-width:760px}
+.page-head-right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid{display:grid;gap:16px}
+.col-main{display:grid;grid-template-columns:300px minmax(0,1fr) 360px;gap:16px;align-items:start}
+.col-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.col-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.stack{display:grid;gap:16px}
+
+/* ---------- 卡片 ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.card.tight{padding:14px}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.card-title{font-size:16.5px;font-weight:800}
+.card-sub{font-size:13px;color:var(--muted)}
+.card-head-right{margin-left:auto;font-size:12.5px;color:var(--muted)}
+.note{font-size:12.5px;color:var(--muted);line-height:1.7}
+.src{margin-top:10px;font-size:12px;color:#84948c;border-top:1px dashed var(--line);padding-top:8px}
+
+/* ---------- 指标卡 ---------- */
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 14px;box-shadow:var(--shadow)}
+.kpi-label{font-size:13px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:6px}
+.kpi-value{font-size:32px;font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-top:4px}
+.kpi-value small{font-size:14px;font-weight:700;color:var(--muted);margin-left:4px}
+.kpi-foot{margin-top:6px;font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.trend{font-weight:800}
+.trend.up{color:var(--red)}
+.trend.down{color:var(--green)}
+
+/* ---------- 状态色 ---------- */
+.lv{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font-size:12.5px;font-weight:800;white-space:nowrap}
+.lv::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.lv-green{background:#e8f7ee;color:#15803d}
+.lv-yellow{background:#fff5e2;color:#b45309}
+.lv-red{background:#fdeaea;color:#b91c1c}
+.chip{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;background:#eef4f1;color:#4c5f57;font-size:12.5px;font-weight:700}
+.chip-sky{background:#e8f2fc;color:#12609f}
+.chip-gold{background:#fdf3e0;color:#96650f}
+
+/* ---------- 地图 ---------- */
+.map-wrap{position:relative}
+.map-svg{width:100%;height:auto;display:block}
+.town{cursor:pointer;transition:filter .16s ease}
+.town:hover{filter:brightness(1.06)}
+.town-label{font-size:12.5px;font-weight:800;fill:#123;pointer-events:none}
+.town-val{font-size:11px;fill:#4a5a53;pointer-events:none}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:12.5px;color:var(--muted);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+/* ---------- 列表 ---------- */
+.list{display:grid;gap:9px}
+.row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fcfdfc}
+.row:hover{background:#f7fbf9}
+.row-main{min-width:0;flex:1}
+.row-title{font-size:14.5px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.row-desc{font-size:12.5px;color:var(--muted);margin-top:2px}
+.row-time{font-size:12.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* ---------- 表格 ---------- */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12.5px;color:var(--muted);font-weight:800;background:#f7faf8;white-space:nowrap}
+tbody tr:hover{background:#fbfdfc}
+td.num{font-variant-numeric:tabular-nums}
+
+/* ---------- 预测条 ---------- */
+.forecast{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.fc-day{border:1px solid var(--line);border-radius:11px;padding:8px 6px;text-align:center;background:#fff}
+.fc-day .d{font-size:12px;color:var(--muted);font-weight:700}
+.fc-day .v{font-size:15px;font-weight:800;margin-top:2px}
+.fc-bar{height:6px;border-radius:999px;margin-top:7px}
+.fc-green .fc-bar{background:var(--green)}
+.fc-yellow .fc-bar{background:var(--yellow)}
+.fc-red .fc-bar{background:var(--red)}
+
+/* ---------- 指标卡网格 ---------- */
+.ind-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.ind{background:#fff;border:1px solid var(--line);border-left:5px solid var(--green);border-radius:14px;padding:14px;box-shadow:var(--shadow);cursor:pointer}
+.ind.yellow{border-left-color:var(--yellow)}
+.ind.red{border-left-color:var(--red)}
+.ind-title{font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ind-val{font-size:26px;font-weight:800;margin-top:6px;letter-spacing:-.4px}
+.ind-val small{font-size:13px;color:var(--muted);font-weight:700;margin-left:4px}
+.ind-meta{margin-top:8px;display:grid;gap:4px;font-size:12.8px;color:var(--muted)}
+.ind-meta b{color:#2c3f37}
+.ind-body{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;display:none}
+.ind.open .ind-body{display:block}
+.ind-body dl{margin:0;display:grid;gap:6px;font-size:13px}
+.ind-body dt{font-weight:800;color:#2c3f37}
+.ind-body dd{margin:0 0 4px;color:var(--muted)}
+
+/* ---------- 物候期条 ---------- */
+.pheno{display:flex;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.pheno div{flex:1;padding:9px 10px;font-size:13px;font-weight:800;color:#6d7d76;background:#f7faf8;border-right:1px solid var(--line);text-align:center}
+.pheno div:last-child{border-right:0}
+.pheno div.now{background:#e8f2fc;color:#0f5b96}
+
+/* ---------- 图表容器 ---------- */
+.chart{width:100%}
+.chart svg{width:100%;height:auto;display:block}
+.ax{font-size:11px;fill:#84948c}
+.gridline{stroke:#eef3f0;stroke-width:1}
+.thr{stroke-dasharray:5 4;stroke-width:1.4}
+.thr-label{font-size:11px;font-weight:800}
+.serie-label{font-size:11.5px;font-weight:800}
+.bar{transition:opacity .15s ease}
+.bar:hover{opacity:.82}
+
+/* ---------- 角色提示条 ---------- */
+.role-hint{display:flex;align-items:center;gap:10px;background:#eef6f2;border:1px solid #d6e8df;color:#20503c;border-radius:13px;padding:11px 14px;font-size:14px;font-weight:600}
+.role-hint b{font-weight:800}
+
+/* ---------- 页脚 ---------- */
+.footer{margin-top:26px;border-top:1px solid var(--line);padding-top:14px;font-size:12.5px;color:#84948c;line-height:1.9}
+.footer b{color:#4c5f57}
+
+.hidden{display:none !important}
+
+@media (max-width:1180px){
+  .col-main{grid-template-columns:1fr}
+  .col-3{grid-template-columns:1fr 1fr}
+}
+@media (max-width:820px){
+  body{font-size:15.5px}
+  .col-2,.col-3{grid-template-columns:1fr}
+  .navbar{top:auto;position:static}
+  .forecast{grid-template-columns:repeat(5,1fr)}
+  .kpi-value{font-size:28px}
+  .wrap{padding:16px 14px 32px}
+}
+
+.view{display:none}
+.view.active{display:block}
+.nav-link.active{color:var(--leaf);border-bottom-color:var(--leaf)}
+.topbar-note{font-size:12.5px;color:#b7e2d0;margin-left:auto;margin-right:8px}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#eafaf1" stroke-width="1.8" stroke-linecap="round">
+          <path d="M4 17a4 4 0 0 1 .6-7.9A5.5 5.5 0 0 1 15 8.2a3.6 3.6 0 0 1 4.9 3.3A3.4 3.4 0 0 1 19 18H6a2 2 0 0 1-2-1Z"/>
+          <path d="M12 21v-6"/><path d="M9.5 17.5 12 15l2.5 2.5"/>
+        </svg>
+      </span>
+      <span>
+        <span class="brand-name">农丰保 · 气象监测平台</span>
+        <div class="brand-sub">铜川市 · 富士苹果 · 气象监测与风险定价</div>
+      </span>
+    </div>
+    <span class="badge-demo" style="background:rgba(22,163,74,.24);border-color:rgba(190,255,214,.45);color:#dcffe9">真实历史数据 · ERA5-Land</span>
+    <div class="topbar-right">
+      <div class="role-switch" role="group" aria-label="切换演示视角">
+        <button type="button" data-role-btn="farmer">果农</button>
+        <button type="button" data-role-btn="officer">客户经理</button>
+        <button type="button" data-role-btn="insurer">保险公司</button>
+        <button type="button" data-role-btn="regulator">监管</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="navbar" aria-label="主导航">
+  <div class="navbar-inner">
+    <a class="nav-group-link" href="#overview">气象监测</a><a class="nav-link" data-nav="overview" href="#overview">监测总览</a><a class="nav-link" data-nav="realtime" href="#realtime">实时监测</a><a class="nav-link" data-nav="indicators" href="#indicators">指标库</a><a class="nav-link" data-nav="alert" href="#alert">阈值与预警</a><a class="nav-link" data-nav="forecast" href="#forecast">预报与提前预警</a><a class="nav-link" data-nav="history" href="#history">历史与回测</a><a class="nav-link" data-nav="data" href="#data">数据资产</a><span class="nav-sep"></span><a class="nav-group-link" href="#policy">应用出口</a><a class="nav-link" data-nav="policy" href="#policy">动态保单</a><a class="nav-link" data-nav="credit" href="#credit">授信放款</a><a class="nav-link" data-nav="claims" href="#claims">理赔闭环</a><span class="nav-sep"></span><a class="nav-link" data-nav="about" href="#about">关于我们</a>
+  </div>
+</nav>
+
+<div class="wrap" style="padding-bottom:0">
+  <div class="role-hint" id="role-hint"></div>
+</div>
+
+<section class="view" id="view-overview" data-view="overview">
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">监测总览大屏</h1>
+      <p class="page-desc">打开第一眼看到天气正在发生什么。本页气象要素为铜川产区的<b>真实历史数据</b>，乡镇分布、PD、保单与授信为模型输出或示意值，均已分别标注。</p>
+    </div>
+    <div class="page-head-right">
+      <span class="chip chip-sky">监测窗口 03-23 07:00 至 03-29 06:00</span>
+      <span class="chip">更新频率 逐小时</span>
+      <span class="chip chip-gold">当前物候期：花序分离期</span>
+    </div>
+  </div>
+
+  <div class="role-hint" id="overview-role-hint"></div>
+
+  <div class="col-main" style="margin-top:16px">
+    <div class="stack">
+      <div class="kpi">
+        <div class="kpi-label">当前气温（宜君县尧生果园站）</div>
+        <div class="kpi-value" id="overview-kpi-temp">—</div>
+        <div class="kpi-foot"><span class="trend up" id="overview-kpi-trend">—</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">24 小时降水</div>
+        <div class="kpi-value" id="overview-kpi-rain">—</div>
+        <div class="kpi-foot" id="overview-kpi-rain-foot">—</div>
+      </div>
+      <div class="kpi" style="border-color:#f3c9c9">
+        <div class="kpi-label">花蕾期冻害累积量</div>
+        <div class="kpi-value" id="overview-kpi-frost" style="color:#b91c1c">—</div>
+        <div class="kpi-foot"><span class="lv lv-red" id="overview-kpi-frost-lv">—</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">相对湿度</div>
+        <div class="kpi-value" id="overview-kpi-humid">—</div>
+        <div class="kpi-foot" id="overview-kpi-humid-foot">—</div>
+      </div>
+      <div class="kpi" style="border-color:#f3c9c9">
+        <div class="kpi-label">当前违约概率 PD</div>
+        <div class="kpi-value" id="overview-kpi-pd" style="color:#b91c1c">—</div>
+        <div class="kpi-foot" id="overview-kpi-pd-foot">—</div>
+      </div>
+      <div class="kpi" style="border-color:#bfe3cd;background:#f7fdf9">
+        <div class="kpi-label">区位差异（同场寒潮）</div>
+        <div class="kpi-value" style="font-size:22px" id="overview-kpi-compare">—</div>
+        <div class="kpi-foot">这是差异化定价与授信的直接依据</div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">铜川苹果产区风险分布（示意）</div>
+            <div class="card-sub">宜君县、印台区两点为真实数据，其余乡镇为示意；点击查看详情</div>
+          </div>
+          <div class="card-head-right">绿 正常 ｜ 黄 关注 ｜ 红 预警</div>
+        </div>
+        <div class="map-wrap">
+          <svg class="map-svg" viewBox="0 0 600 420" role="img" aria-label="铜川苹果产区风险分布示意图">
+            <g class="town" data-town="宜君县尧生镇">
+              <title>宜君县尧生镇</title>
+              <polygon points="30,30 250,30 245,165 55,175 25,110"/>
+              <text class="town-label" x="118" y="96">宜君县尧生镇</text>
+              <text class="town-val" x="120" y="116" text-anchor="middle"></text>
+            </g>
+            <g class="town" data-town="宜君县哭泉镇">
+              <title>宜君县哭泉镇</title>
+              <polygon points="255,30 575,30 570,140 250,160"/>
+              <text class="town-label" x="398" y="92">宜君县哭泉镇</text>
+              <text class="town-val" x="400" y="112" text-anchor="middle"></text>
+            </g>
+            <g class="town" data-town="宜君县彭镇">
+              <title>宜君县彭镇</title>
+              <polygon points="250,165 405,175 420,300 265,320"/>
+              <text class="town-label" x="330" y="240">宜君县彭镇</text>
+              <text class="town-val" x="332" y="260" text-anchor="middle"></text>
+            </g>
+            <g class="town" data-town="印台区红土镇">
+              <title>印台区红土镇</title>
+              <polygon points="410,180 570,145 575,300 425,310"/>
+              <text class="town-label" x="486" y="228">印台区红土镇</text>
+              <text class="town-val" x="492" y="248" text-anchor="middle"></text>
+            </g>
+            <g class="town" data-town="印台区阿庄镇">
+              <title>印台区阿庄镇</title>
+              <polygon points="425,315 575,305 570,385 450,395"/>
+              <text class="town-label" x="492" y="350">印台区阿庄镇</text>
+              <text class="town-val" x="498" y="370" text-anchor="middle"></text>
+            </g>
+            <g class="town" data-town="印台区广阳镇">
+              <title>印台区广阳镇</title>
+              <polygon points="35,180 245,170 260,325 210,395 30,385"/>
+              <text class="town-label" x="132" y="282">印台区广阳镇</text>
+              <text class="town-val" x="140" y="302" text-anchor="middle"></text>
+            </g>
+          </svg>
+          <div class="legend">
+            <span><i class="dot" style="background:#16a34a"></i>绿色正常</span>
+            <span><i class="dot" style="background:#f59e0b"></i>黄色关注</span>
+            <span><i class="dot" style="background:#dc2626"></i>红色预警</span>
+            <span>图形为示意分布，非真实行政区划边界</span>
+          </div>
+        </div>
+        <div class="src">数据来源：宜君县、印台区两点的气象指标来自 ERA5-Land 真实数据；乡镇风险等级由指标 + PD 计算（示意）。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">未来 10 天冻害风险</div>
+            <div class="card-sub">基于预报产品计算的盛花期冻害超越概率（当前为示意，正式版接入智能网格预报）</div>
+          </div>
+          <div class="card-head-right">最高：3/30 74%</div>
+        </div>
+        <div class="forecast" id="overview-forecast"></div>
+        <div class="src">数据来源：智能网格预报产品（拟通过省级气象部门合作协议获取）；概率由花期临界温度与预报最低温度计算。</div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">今日预警清单</div>
+            <div class="card-sub">按触发时间排序，可直接处置</div>
+          </div>
+          <div class="card-head-right">3 条</div>
+        </div>
+        <div class="list" id="overview-alerts"></div>
+        <div class="src">预警规则：指标超过历史 P75 分位转黄，超过 P90 分位转红（阈值需本地标定后固化）。</div>
+      </div>
+      <div class="card" id="town-detail">
+        <div class="card-title">乡镇详情</div>
+        <p class="note" style="margin-top:8px">点击左侧地图中的乡镇，这里会显示该乡镇的实时气象、冻害累积、在保农户与授信余额。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">花蕾期冻害累积量（近 7 天 · 真实数据）</div>
+          <div class="card-sub">FT = Σ max(0, T_crit − T_hour)，花蕾期临界温度取 −2.8℃</div>
+        </div>
+        <div class="card-head-right">已超红色阈值 10 ℃·h</div>
+      </div>
+      <div id="overview-chart-frost"></div>
+      <div class="src">数据来源：Open-Meteo 历史接口（ERA5-Land 约 9km 格点），2025-03-23 至 03-29。临界温度为文献参考值，需按当地品种与花期实测标定。</div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">逐日最低气温对比（宜君县 vs 印台区）</div>
+          <div class="card-sub">同一场寒潮，海拔较高的宜君县低温更强、持续时间更长</div>
+        </div>
+        <div class="card-head-right">宜君最低 <b id="overview-min-yijun">—</b>｜印台最低 <b id="overview-min-yintai">—</b></div>
+      </div>
+      <div id="overview-chart-compare"></div>
+      <div class="src">数据来源：ERA5-Land 逐小时气温（真实数据）。两点为产区近似中心点，正式版需替换为果园实测坐标与地形订正结果。</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div><b>数据构成说明：</b>气温、降水、湿度、风速为<b>真实历史数据</b>（Open-Meteo / ERA5-Land，约 9km 格点，2025-03-23 至 03-29）；乡镇风险分布、PD、保单、授信、未来 10 天概率为<b>模型输出或示意值</b>。</div>
+    <div><b>正式版数据源：</b>中国气象局智能网格实况与预报（1km 逐小时）、区域自动气象站、风云卫星、Sentinel-2、ERA5 再分析。</div>
+    <div><b>说明：</b>格点数据对山区果园存在平滑（暖偏差），需用自动站与高程订正，这是本项目"格点 + 站点融合"的直接依据。</div>
+  </div>
+
+</main>
+</section><section class="view" id="view-realtime" data-view="realtime">
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">实时监测</h1>
+      <p class="page-desc">铜川产区多要素实况与果园站状态（真实历史数据）。支持时间范围回放，用于答辩时演示"2025 年 3 月那次倒春寒当天发生了什么"。</p>
+    </div>
+    <div class="page-head-right">
+      <div class="role-switch" style="background:#eef4f1">
+        <button type="button" id="realtime-r24" style="color:#3c5348">近 24 小时</button>
+        <button type="button" id="realtime-r72" style="color:#3c5348">近 3 天</button>
+        <button type="button" id="realtime-r168" style="color:#3c5348">近 7 天</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="role-hint" id="realtime-role-hint"></div>
+
+  <div class="col-3" style="margin-top:16px">
+    <div class="kpi">
+      <div class="kpi-label">当前气温（宜君县尧生果园站）</div>
+      <div class="kpi-value" id="realtime-rt-temp">—</div>
+      <div class="kpi-foot">花蕾期冻害临界温度 T_crit = −2.8℃（文献值，需标定）</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">24 小时降水</div>
+      <div class="kpi-value" id="realtime-rt-rain">—</div>
+      <div class="kpi-foot">近 7 日累计 <b id="realtime-rt-rainsum">—</b></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">最大风速</div>
+      <div class="kpi-value" id="realtime-rt-wind">—</div>
+      <div class="kpi-foot" id="realtime-rt-wind-note">—</div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">气温实况与冻害临界温度</div>
+          <div class="card-sub">低于 −2.8℃ 的时段触发花蕾期冻害累积</div>
+        </div>
+        <div class="card-head-right" id="realtime-chart-temp-note">—</div>
+      </div>
+      <div id="realtime-chart-temp"></div>
+      <div class="src">数据来源：区域自动气象站 + ERA5 再分析（演示为示意曲线）。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">降水量</div>
+          <div class="card-sub">逐小时降水强度，按自然日累加后判定连阴雨（日降水超 5mm）</div>
+        </div>
+        <div class="card-head-right" id="realtime-rain-days-note">—</div>
+      </div>
+      <div id="realtime-chart-rain"></div>
+      <div class="src">数据来源：自动站降水观测 + GPM IMERG（演示为示意曲线）。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">相对湿度</div>
+          <div class="card-sub">高湿与连阴雨叠加时，裂果与霉变风险上升</div>
+        </div>
+        <div class="card-head-right">当前 <b id="realtime-rt-humid">—</b></div>
+      </div>
+      <div id="realtime-chart-humid"></div>
+      <div class="src">数据来源：自动站湿度观测（演示为示意曲线）。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">风速</div>
+          <div class="card-sub">寒潮过境时风速同步上升，可用于交叉验证</div>
+        </div>
+        <div class="card-head-right">峰值 <b id="realtime-rt-windmax">—</b></div>
+      </div>
+      <div id="realtime-chart-wind"></div>
+      <div class="src">数据来源：自动站风观测（演示为示意曲线）。</div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">自动站状态</div>
+          <div class="card-sub">数据质量直接决定指标可信度</div>
+        </div>
+        <div class="card-head-right">6 个站</div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>站点</th><th>气温</th><th>降水</th><th>风速</th><th>湿度</th><th>数据</th><th>状态</th></tr>
+        </thead>
+        <tbody id="realtime-station-body"></tbody>
+      </table>
+      <div class="src">说明：状态列用于展示数据质量监控；正式版本应对缺测、跳变、延迟做自动标记并触发补数流程。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">事件标注</div>
+        <div class="card-sub">把气象事件与指标变化对齐，是复盘与回测的基础（以下为 2025 年 3 月真实事件）</div>
+        </div>
+      </div>
+      <div class="list">
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title"><span class="lv lv-yellow">降温</span>3/27 起强冷空气影响铜川</div>
+            <div class="row-desc" id="realtime-event-cold">—</div>
+          </div>
+          <div class="row-time">3/27 - 3/29</div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title"><span class="lv lv-red">触发</span>3/29 06:00 冻害累积量越过红色阈值</div>
+            <div class="row-desc" id="realtime-event-trigger">—</div>
+          </div>
+          <div class="row-time">3/29 06:00</div>
+        </div>
+      </div>
+      <div class="src">提示：答辩演示时先播放"事件前"的时间范围，再切到 3/27-3/29 事件段，最能说明提前预警的价值。</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div><b>数据声明：</b>本页气温、降水、湿度、风速为<b>真实历史数据</b>（Open-Meteo / ERA5-Land，约 9km 格点，2025-03-23 至 03-29）；标注"示意"的站点为界面示意值。</div>
+    <div><b>正式版本：</b>接入中国气象局智能网格实况（1km 逐小时）与预报产品、区域自动站分钟级数据，并对缺测与异常做质控标记。</div>
+  </div>
+
+</main>
+</section><section class="view" id="view-indicators" data-view="indicators">
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">指标库</h1>
+      <p class="page-desc">平台的核心资产不是界面，而是这套"把天气加工成作物风险"的指标体系。以铜川富士苹果为原型，每张卡片给出当前值、历史分位、阈值、更新频率、数据来源与触发动作。</p>
+    </div>
+    <div class="page-head-right">
+      <span class="chip">品类：富士苹果</span>
+      <span class="chip chip-sky">当前物候期：花序分离期</span>
+    </div>
+  </div>
+
+  <div class="role-hint" id="indicators-role-hint"></div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-head">
+      <div>
+        <div class="card-title">物候期定位</div>
+        <div class="card-sub">同一气象事件在不同物候期的含义完全不同，冻害临界温度也随物候期变化（花蕾期约 −2.8℃，盛花期约 −2.2℃）</div>
+      </div>
+      <div class="card-head-right">当前：花序分离期</div>
+    </div>
+    <div class="pheno" id="indicators-pheno"></div>
+  </div>
+
+  <div class="col-3" style="margin-top:16px">
+    <div class="kpi">
+      <div class="kpi-label">指标总数</div>
+      <div class="kpi-value" id="indicators-sum-total">—<small>项</small></div>
+      <div class="kpi-foot">覆盖低温、高温、降水、风雹、遥感校验与预报预警</div>
+    </div>
+    <div class="kpi" style="border-color:#f3c9c9">
+      <div class="kpi-label">红色状态</div>
+      <div class="kpi-value" id="indicators-sum-red" style="color:#b91c1c">—<small>项</small></div>
+      <div class="kpi-foot">需立即处置并同步至信贷与保险端</div>
+    </div>
+    <div class="kpi" style="border-color:#f7dfb4">
+      <div class="kpi-label">黄色状态</div>
+      <div class="kpi-value" id="indicators-sum-yellow" style="color:#b45309">—<small>项</small></div>
+      <div class="kpi-foot">建议现场确认并提前干预</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-head">
+      <div>
+        <div class="card-title">指标清单</div>
+        <div class="card-sub">点击任意指标卡片可展开计算公式、阈值依据与触发动作</div>
+      </div>
+      <div class="card-head-right" id="indicators-filter-info">全部指标</div>
+    </div>
+    <div class="role-switch" style="background:#eef4f1;margin-bottom:14px;display:inline-flex">
+      <button type="button" data-filter="all" style="color:#3c5348">全部</button>
+      <button type="button" data-filter="气象风险" style="color:#3c5348">气象风险</button>
+      <button type="button" data-filter="遥感" style="color:#3c5348">遥感校验</button>
+      <button type="button" data-filter="预报" style="color:#3c5348">预报预警</button>
+    </div>
+    <div class="ind-grid" id="indicators-ind-grid"></div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">阈值是怎么定出来的</div>
+          <div class="card-sub">这是评审最容易追问的地方，也是指标体系能不能站住的关键</div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">第一步：标准化</div>
+            <div class="row-desc">把每个指标换算成历史分位数（P75 / P90），不同量纲的指标就能放在同一尺度上比较，不需要人为凑权重。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">第二步：估计权重</div>
+            <div class="row-desc">用当地历史气象与产量（或理赔）面板数据，通过回归或随机森林特征重要性估计每个指标的权重，并给出显著性与置信区间。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">第三步：样本外验证</div>
+            <div class="row-desc">留出年份做回测，检查"指标触发"与"实际减产/理赔"是否吻合，输出命中率、提前量与预测误差。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">第四步：参数迭代</div>
+            <div class="row-desc">每年收获后用真实结果回流校准系数，并把修正记录留档，形成可追溯的标定历史。</div>
+          </div>
+        </div>
+      </div>
+<div class="src">说明：生物学临界温度（如苹果花蕾期约 −2.8℃、盛花期约 −2.2℃）优先采用当地品种实测或文献区间，并与统计方法估计的阈值相互校验。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">指标到金融动作的映射</div>
+          <div class="card-sub">每个监测结果都必须有一个出口</div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>指标状态</th><th>预警等级</th><th>银行动作</th><th>保险动作</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>全部指标在 P75 以内</td>
+            <td><span class="lv lv-green">绿色正常</span></td>
+            <td>常规贷后监测</td>
+            <td>维持现行费率</td>
+          </tr>
+          <tr>
+            <td>任一核心指标进入 P75-P90</td>
+            <td><span class="lv lv-yellow">黄色关注</span></td>
+            <td>客户经理上门、评估风险敞口</td>
+            <td>保费上浮、保障额度同步提高</td>
+          </tr>
+          <tr>
+            <td>核心指标超过 P90 或预报极端事件</td>
+            <td><span class="lv lv-red">红色预警</span></td>
+            <td>下调敞口、启动展期预案</td>
+            <td>启动赔付测算与提前干预</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="src">说明：表中"银行动作/保险动作"为方案设计，需在试点报备与合同条款中明确边界与触发条件。</div>
+    </div>
+  </div>
+
+  <div class="footer">
+<div><b>数据声明：</b>标注"真实数据"的指标（冻害累积量、夜间最低气温、降水量）来自 ERA5-Land 真实历史数据；标注"示意 / 待接入"的指标为方案设计值或待接入数据源，正式版本需用当地历史数据完成标定并留档。</div>
+    <div><b>数据源规划：</b>气温与降水——自动站 + 智能网格实况；干旱——降水与蒸散；长势——Sentinel-2；预报——智能网格预报产品。</div>
+  </div>
+
+</main>
+</section><section class="view" id="view-alert" data-view="alert">
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">阈值与预警中心</h1>
+      <p class="page-desc">指标只有绑定阈值才能变成预警，预警只有绑定动作才能产生价值。本页展示阈值可配置、预警可触发、工单可闭环的完整链路（数据为铜川 2025 年 3 月真实寒潮）。</p>
+    </div>
+    <div class="page-head-right">
+      <span class="chip chip-red" style="background:#fdeaea;color:#b91c1c">红色预警 1 条</span>
+      <span class="chip chip-gold">黄色预警 2 条</span>
+      <span class="chip">已闭环 0 条</span>
+    </div>
+  </div>
+
+  <div class="role-hint" id="alert-role-hint"></div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">阈值调节器（交互演示）</div>
+          <div class="card-sub">拖动临界温度，实时看同一段真实气温下会触发多少小时、多少累积量、什么等级</div>
+        </div>
+        <div class="card-head-right">数据窗口 2025-03-22 07:00 至 03-29 06:00</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px">
+        <label style="font-size:14px;font-weight:800;color:#3c5348">冻害临界温度</label>
+        <input id="alert-tcrit" type="range" min="-6" max="-1" step="0.1" value="-2.8" style="flex:1;min-width:200px;accent-color:#147a55">
+        <b id="alert-tcrit-val" style="font-size:20px;color:#b91c1c;min-width:72px">-2.8℃</b>
+      </div>
+      <div class="col-3" style="margin-top:6px">
+        <div class="kpi">
+          <div class="kpi-label">低于临界的小时数</div>
+          <div class="kpi-value" id="alert-calc-hours">—</div>
+          <div class="kpi-foot">窗口共 168 小时</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">冻害累积量</div>
+          <div class="kpi-value" id="alert-calc-acc">—</div>
+          <div class="kpi-foot">Σ（临界温度 − 逐小时气温）</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">判定等级</div>
+          <div class="kpi-value" style="font-size:22px" id="alert-calc-level">—</div>
+          <div class="kpi-foot">黄 &gt;3 ℃·h ｜ 红 &gt;10 ℃·h</div>
+        </div>
+      </div>
+      <div class="src">说明：阈值取自文献参考值（花蕾期约 −2.8℃、盛花期约 −2.2℃），正式版需用当地品种与物候观测标定；黄/红分档阈值同样需要标定。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">当前触发清单</div>
+          <div class="card-sub">按触发时间排序，每条都可直接派单</div>
+        </div>
+        <div class="card-head-right">3 条</div>
+      </div>
+      <div class="list" id="alert-alerts"></div>
+      <div class="src">以上数值来自真实数据：宜君县冻害累积 13.8 ℃·h（窗口 3/22-3/29），印台区最低 −2.9℃。</div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">预警规则表</div>
+          <div class="card-sub">规则可配置、可追溯、可回测</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>指标</th><th>黄色阈值</th><th>红色阈值</th><th>更新频率</th><th>触发后的业务动作</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>花蕾期冻害累积量</td>
+            <td>&gt;3 ℃·h</td>
+            <td>&gt;10 ℃·h</td>
+            <td>逐小时</td>
+            <td>果园防霜 → 上修 PD → 赔付测算</td>
+          </tr>
+          <tr>
+            <td>夜间最低气温</td>
+            <td>低于 −2.8℃</td>
+            <td>低于 −3.9℃</td>
+            <td>逐小时</td>
+            <td>防霜提示 → 现场核实 → 灾情记录</td>
+          </tr>
+          <tr>
+            <td>未来 10 天冻害概率</td>
+            <td>&gt;45%</td>
+            <td>&gt;60%</td>
+            <td>每日</td>
+            <td>提前预警 → 备防霜物资 → 敞口评估</td>
+          </tr>
+          <tr>
+            <td>成熟期连阴雨日数</td>
+            <td>≥3 天</td>
+            <td>≥5 天</td>
+            <td>逐日</td>
+            <td>抢收提示 → 品质损失评估</td>
+          </tr>
+          <tr>
+            <td>膨大期高温日数</td>
+            <td>≥2 天</td>
+            <td>≥5 天</td>
+            <td>逐日</td>
+            <td>灌溉调度 → 产量影响评估</td>
+          </tr>
+          <tr>
+            <td>干旱指数 SPI</td>
+            <td>&lt;−1</td>
+            <td>&lt;−1.5</td>
+            <td>逐日 / 逐周</td>
+            <td>灌溉调度 → 上调 PD</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="src">说明：阈值为方案设计值，正式版需用当地历史气象与灾损（或理赔）数据完成标定，并保留每次修改的版本记录。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">工单闭环（示例）</div>
+          <div class="card-sub">从触发到结案，全过程留痕</div>
+        </div>
+        <div class="card-head-right">工单号 YJ-2025-0329-001</div>
+      </div>
+      <div class="list">
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title"><span class="lv lv-red">1 触发</span>03-29 06:00 宜君县尧生镇</div>
+            <div class="row-desc">花蕾期冻害累积量 13.8 ℃·h，越过红色阈值 10；系统自动生成工单并推送客户经理</div>
+          </div>
+          <div class="row-time">自动</div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title"><span class="lv lv-yellow">2 核实</span>03-29 09:30 客户经理到场</div>
+            <div class="row-desc">现场记录果园温度、花蕾受害情况，上传照片与位置；系统同步给保险公司</div>
+          </div>
+          <div class="row-time">3.5 小时</div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title"><span class="lv lv-yellow">3 处置</span>03-29 14:00 防霜与风险处置</div>
+            <div class="row-desc">指导果园熏烟防霜；银行将客户 PD 由 8.1% 上修至 21.4%，冻结新增敞口</div>
+          </div>
+          <div class="row-time">8 小时</div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title"><span class="lv lv-green">4 结案</span>04-05 赔付测算完成</div>
+            <div class="row-desc">结合受灾面积与减产比例测算赔付，赔款优先偿还贷款本息，余额到农户</div>
+          </div>
+          <div class="row-time">7 天</div>
+        </div>
+      </div>
+      <div class="src">说明：流程与时限为方案设计，需在试点制度与三方协议中明确。</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-head">
+      <div>
+        <div class="card-title">分级响应矩阵</div>
+        <div class="card-sub">同一个风险等级，对不同角色的含义与动作</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>等级</th><th>判定条件</th><th>果农</th><th>银行</th><th>保险公司</th><th>监管 / 政府</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="lv lv-green">绿色正常</span></td>
+          <td>全部指标在 P75 以内</td>
+          <td>常规管理</td>
+          <td>常规贷后监测</td>
+          <td>维持现行费率</td>
+          <td>常规统计</td>
+        </tr>
+        <tr>
+          <td><span class="lv lv-yellow">黄色关注</span></td>
+          <td>核心指标进入 P75-P90 或预报概率 &gt;45%</td>
+          <td>准备防霜物资</td>
+          <td>客户经理上门、评估敞口</td>
+          <td>保费上浮、保额同步提高</td>
+          <td>区域预警提示</td>
+        </tr>
+        <tr>
+          <td><span class="lv lv-red">红色预警</span></td>
+          <td>核心指标超 P90 或预报概率 &gt;60%</td>
+          <td>立即防霜、拍照留证</td>
+          <td>下调敞口、启动展期预案</td>
+          <td>启动赔付测算与提前干预</td>
+          <td>灾情统计、联动风险补偿池</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="src">说明：矩阵为方案设计；其中"保费上浮、保额提高"需在保单条款与备案费率区间内执行。</div>
+  </div>
+
+  <div class="footer">
+    <div><b>数据声明：</b>本页气温为 ERA5-Land 真实历史数据（2025-03-22 07:00 至 03-29 06:00）；阈值、分档、工单流程为方案设计值。</div>
+    <div><b>说明：</b>阈值调节器展示的是"同一段真实数据在不同阈值下的结果"，用于说明阈值标定的重要性——这也回应了评审常见的追问："你的阈值是怎么定的"。</div>
+  </div>
+
+</main>
+</section><section class="view" id="view-forecast" data-view="forecast">
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">预报与提前预警</h1>
+      <p class="page-desc">实况只能告诉你"已经多冷"，预报才能告诉你"接下来会不会冻"。这一屏是平台相对传统保险模式最本质的差别：<b>把风险信号从事后提前到事前</b>。</p>
+    </div>
+    <div class="page-head-right">
+      <span class="chip chip-sky">预报时效 未来 10 天</span>
+      <span class="chip">更新频率 每日</span>
+    </div>
+  </div>
+
+  <div class="role-hint" id="forecast-role-hint"></div>
+
+  <div class="col-3" style="margin-top:16px">
+    <div class="kpi">
+      <div class="kpi-label">提前预警能力（设计值）</div>
+      <div class="kpi-value">10<small>天</small></div>
+      <div class="kpi-foot">取决于预报时效与防霜准备时间</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">预报接口最低气温（实测样例）</div>
+      <div class="kpi-value" id="forecast-fc-min">—</div>
+      <div class="kpi-foot" id="forecast-fc-min-at">—</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">接口实测取数字段</div>
+      <div class="kpi-value" id="forecast-fc-fields">—</div>
+      <div class="kpi-foot">逐小时 + 逐日，满足冻害指标计算</div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">提前预警时间轴（以 2025-03-27 真实寒潮为例）</div>
+          <div class="card-sub">同一场事件，在不同提前量下可以做什么</div>
+        </div>
+        <div class="card-head-right">谷底 3/29 06:00，宜君 −4.7℃</div>
+      </div>
+      <div id="forecast-chart-timeline"></div>
+      <div class="src">曲线为真实历史逐小时气温（ERA5-Land，2025-03-22 07:00 至 03-29 06:00）。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">提前量 → 可执行动作</div>
+          <div class="card-sub">预警不是发个通知，而是绑定动作</div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>提前量</th><th>气象信号</th><th>果园动作</th><th>银行 / 保险动作</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>T-10 天</b></td>
+            <td>预报显示强冷空气过程，冻害概率 &gt;60%</td>
+            <td>准备熏烟材料、检查喷灌设备</td>
+            <td>提示客户，评估风险敞口，冻结新增敞口</td>
+          </tr>
+          <tr>
+            <td><b>T-5 天</b></td>
+            <td>过程确认，预报最低温逼近临界温度</td>
+            <td>安排值守人员，联系防霜服务队</td>
+            <td>更新 PD，通知保险公司测算赔付准备</td>
+          </tr>
+          <tr>
+            <td><b>T-2 天</b></td>
+            <td>概率上调，落区明确到乡镇</td>
+            <td>果园分区布防，重点地块优先</td>
+            <td>生成预警工单，客户经理到场核实</td>
+          </tr>
+          <tr>
+            <td><b>T-1 天</b></td>
+            <td>低温时段预报（夜间 02:00-07:00）</td>
+            <td>凌晨点火熏烟 / 喷水防霜</td>
+            <td>启动应急预案，准备理赔通道</td>
+          </tr>
+          <tr>
+            <td><b>触发</b></td>
+            <td>实况低于临界温度，累积量越阈</td>
+            <td>记录受灾情况，拍照留证</td>
+            <td>自动赔付测算，赔款优先还贷</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="src">说明：动作清单为方案设计，需在试点制度中明确责任人与时限。</div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">预报接口实测样例（真实取数）</div>
+          <div class="card-sub" id="forecast-sample-note">—</div>
+        </div>
+        <div class="card-head-right">逐日最低 / 最高气温与降水</div>
+      </div>
+      <table>
+        <thead><tr><th>日期</th><th>最低气温</th><th>最高气温</th><th>降水</th><th>冻害提示</th></tr></thead>
+        <tbody id="forecast-fc-table"></tbody>
+      </table>
+      <div class="src">数据来源：Open-Meteo 预报接口（含过去 7 天与未来 10 天）。这是接口连通性实测，用于证明"预报数据可以稳定接入"，不代表当期业务数据。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">预报数据源与接入方式</div>
+          <div class="card-sub">从课题阶段到业务化的三步</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>阶段</th><th>数据源</th><th>分辨率 / 时效</th><th>获取方式</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>课题阶段</b><br>（已实现）</td>
+            <td>Open-Meteo 预报接口</td>
+            <td>约 1-11km，未来 10 天逐小时</td>
+            <td>公开接口，无需密钥</td>
+          </tr>
+          <tr>
+            <td><b>试点阶段</b></td>
+            <td>智能网格预报产品</td>
+            <td>1km，逐小时，未来 10 天</td>
+            <td>省级气象部门数据合作协议</td>
+          </tr>
+          <tr>
+            <td><b>业务阶段</b></td>
+            <td>智能网格预报 + 集合预报</td>
+            <td>1km + 集合成员</td>
+            <td>合作接入，含概率产品</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="src">说明：集合预报的离散度是"冻害概率"的来源；单一确定性预报只能给最低温，不能给概率。</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div><b>数据声明：</b>本页时间轴曲线为 ERA5-Land 真实历史数据；预报表格为 2026-09-14 的接口实测样例，用于证明接口可用；概率与动作清单为方案设计值。</div>
+    <div><b>说明：</b>提前预警的价值在于给农户留出防霜时间，也给银行留出调整敞口的时间——这是"气象数据产生金融价值"的最短路径。</div>
+  </div>
+
+</main>
+</section><section class="view" id="view-history" data-view="history">
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">历史与回测</h1>
+      <p class="page-desc">用 2015-2025 年真实气象数据回看：这个产区到底多大概率发生花期冻害、程度多重。这一页回答的是"你的阈值和定价到底靠不靠谱"。</p>
+    </div>
+    <div class="page-head-right">
+      <span class="chip chip-sky">回测窗口 每年 03-25 至 04-25</span>
+      <span class="chip">临界温度 −2.8℃</span>
+      <span class="chip">样本 11 年</span>
+    </div>
+  </div>
+
+  <div class="role-hint" id="history-role-hint"></div>
+
+  <div class="col-3" style="margin-top:16px">
+    <div class="kpi">
+      <div class="kpi-label">11 年中出现明显冻害累积的年份</div>
+      <div class="kpi-value" id="history-bt-years">—</div>
+      <div class="kpi-foot">以宜君县冻害累积量 &gt;3 ℃·h 计</div>
+    </div>
+    <div class="kpi" style="border-color:#f3c9c9">
+      <div class="kpi-label">最严重年份</div>
+      <div class="kpi-value" id="history-bt-worst">—</div>
+      <div class="kpi-foot" id="history-bt-worst-foot">—</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">同一年份的区位差异</div>
+      <div class="kpi-value" style="font-size:22px" id="history-bt-gap">—</div>
+      <div class="kpi-foot">宜君县（高海拔）vs 印台区</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-head">
+      <div>
+        <div class="card-title">逐年花期冻害累积量（2015-2025，真实数据）</div>
+        <div class="card-sub">冻害累积量 FT = Σ max(0, −2.8℃ − T_hour)，红色阈值 10 ℃·h</div>
+      </div>
+      <div class="card-head-right">宜君县 vs 印台区</div>
+    </div>
+    <div id="history-chart-years"></div>
+    <div class="src">数据来源：Open-Meteo 历史接口（ERA5-Land，约 9km 格点），回测窗口为每年 03-25 至 04-25。临界温度取文献参考值 −2.8℃。</div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">逐年明细</div>
+          <div class="card-sub">受冻小时数指低于 −2.8℃ 的小时数</div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>年份</th><th>宜君最低</th><th>宜君受冻小时</th><th>宜君累积</th><th>印台最低</th><th>印台累积</th><th>最冷日</th></tr>
+        </thead>
+        <tbody id="history-bt-table"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">2025-03 事件复盘（真实数据）</div>
+          <div class="card-sub">逐日最低气温，谷底出现在 03-28 至 03-29</div>
+        </div>
+        <div class="card-head-right">宜君 −4.7℃ ｜ 印台 −2.9℃</div>
+      </div>
+      <div id="history-chart-replay"></div>
+      <div class="src">数据来源：ERA5-Land 逐小时气温（2025-03-22 07:00 至 03-29 06:00）。</div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">回测结论</div>
+          <div class="card-sub">从真实数据能读出什么</div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">这是典型的低频高损风险</div>
+            <div class="row-desc">11 年里只有 2025 年出现明显冻害累积（宜君 15.2 ℃·h），其余年份接近 0。低频意味着历史理赔样本极少，<b>传统"按历史赔付定价"的方法天然失效</b>——这正是需要用气象指标定价的理由。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">区位差异大于年度差异</div>
+            <div class="row-desc">2025 年同一天，宜君县累积 15.2 ℃·h（红色），印台区仅 0.1 ℃·h（绿色）。同一产区内部差出两个风险等级，说明保险与授信必须做到村级甚至地块级差异化定价。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">格点数据会低估山区低温</div>
+            <div class="row-desc">ERA5-Land 约 9km 格点会平滑掉丘陵果园的局部低温。因此本平台的指标必须经过自动站观测与高程订正——这是"格点 + 站点融合"的直接依据，也是下一步的数据工作重点。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">校验框架（下一步接入灾损数据）</div>
+          <div class="card-sub">现在的回测是"指标侧"，补齐数据后才能算命中率</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>校验指标</th><th>定义</th><th>所需数据</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>冻害命中率</td>
+            <td>指标触发且实际减产的比例</td>
+            <td>分县单产（统计年鉴）</td>
+            <td><span class="lv lv-yellow">待接入</span></td>
+          </tr>
+          <tr>
+            <td>漏报率</td>
+            <td>实际减产但指标未触发的比例</td>
+            <td>分县单产 + 灾情记录</td>
+            <td><span class="lv lv-yellow">待接入</span></td>
+          </tr>
+          <tr>
+            <td>提前量</td>
+            <td>预警发出到事件发生的时间</td>
+            <td>预报数据 + 事件时间</td>
+            <td><span class="lv lv-green">可算</span></td>
+          </tr>
+          <tr>
+            <td>赔付偏差</td>
+            <td>指数赔付与实际损失的差异</td>
+            <td>保险公司理赔记录</td>
+            <td><span class="lv lv-yellow">待接入</span></td>
+          </tr>
+          <tr>
+            <td>PD 校准度</td>
+            <td>预测 PD 与实际违约率的偏差</td>
+            <td>试点贷款还款记录</td>
+            <td><span class="lv lv-yellow">待试点</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="src">说明：这一页先把"能算的"算出来（指标侧真实回测），把"要数据的"清单列清楚，比直接给一个来路不明的命中率更可靠。</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div><b>数据声明：</b>本页全部为 ERA5-Land 真实历史数据计算结果（2015-2025），临界温度 −2.8℃ 为文献参考值，需按当地品种与物候观测标定。</div>
+    <div><b>下一步：</b>接入铜川分县苹果单产（统计年鉴）与保险公司理赔记录后，即可补上命中率与赔付偏差两项校验。</div>
+  </div>
+
+</main>
+</section><section class="view" id="view-data" data-view="data">
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">数据资产</h1>
+      <p class="page-desc">平台的底座是数据。本页把"用了什么数据、怎么来的、什么频率、什么质量、合规边界在哪"全部摊开——数据可信，指标才可信，定价才可信。</p>
+    </div>
+    <div class="page-head-right">
+      <span class="chip chip-sky">已接入 3 类真实数据</span>
+      <span class="chip">规划 8 类数据源</span>
+    </div>
+  </div>
+
+  <div class="role-hint" id="data-role-hint"></div>
+
+  <div class="col-3" style="margin-top:16px">
+    <div class="kpi">
+      <div class="kpi-label">已接入数据源</div>
+      <div class="kpi-value">3<small>类</small></div>
+      <div class="kpi-foot">历史气象、预报、遥感（规划中）</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">最高更新频率</div>
+      <div class="kpi-value">1<small>小时</small></div>
+      <div class="kpi-foot">实况逐小时；预报每日更新</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">历史序列长度</div>
+      <div class="kpi-value">11<small>年</small></div>
+      <div class="kpi-foot">2015-2025 年逐小时与逐日数据</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-head">
+      <div>
+        <div class="card-title">数据源清单</div>
+        <div class="card-sub">"已接入"指本原型中已实际取数并用于计算</div>
+      </div>
+      <div class="card-head-right">状态更新 2026-09-14</div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>数据源</th><th>要素</th><th>分辨率</th><th>频率</th><th>获取方式</th><th>状态</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ERA5-Land 再分析（历史）</td>
+          <td>气温、降水、湿度、风速</td>
+          <td>约 9km 格点</td>
+          <td>逐小时</td>
+          <td>Open-Meteo 历史接口</td>
+          <td><span class="lv lv-green">已接入</span></td>
+        </tr>
+        <tr>
+          <td>数值预报产品</td>
+          <td>未来 10 天气温、降水、湿度、风速</td>
+          <td>约 1-11km</td>
+          <td>每日更新</td>
+          <td>Open-Meteo 预报接口</td>
+          <td><span class="lv lv-green">已接入</span></td>
+        </tr>
+        <tr>
+          <td>历史长序列（2015-2025）</td>
+          <td>逐日最低/最高气温、降水</td>
+          <td>约 9km 格点</td>
+          <td>逐日</td>
+          <td>Open-Meteo 历史接口</td>
+          <td><span class="lv lv-green">已接入</span></td>
+        </tr>
+        <tr>
+          <td>中国气象局智能网格实况</td>
+          <td>温湿风降水</td>
+          <td>1km</td>
+          <td>逐小时</td>
+          <td>省级气象部门数据合作协议</td>
+          <td><span class="lv lv-yellow">待接入</span></td>
+        </tr>
+        <tr>
+          <td>区域自动气象站</td>
+          <td>分钟级气温、降水、风</td>
+          <td>站点</td>
+          <td>5-10 分钟</td>
+          <td>地方气象局合作 / 果园自建</td>
+          <td><span class="lv lv-yellow">待接入</span></td>
+        </tr>
+        <tr>
+          <td>Sentinel-2 遥感影像</td>
+          <td>NDVI / EVI 长势、物候</td>
+          <td>10m</td>
+          <td>约 5 天</td>
+          <td>哥白尼数据空间（免费注册）</td>
+          <td><span class="lv lv-yellow">待接入</span></td>
+        </tr>
+        <tr>
+          <td>土壤墒情监测</td>
+          <td>土壤含水率</td>
+          <td>站点</td>
+          <td>逐小时 / 逐日</td>
+          <td>农业气象观测站合作</td>
+          <td><span class="lv lv-yellow">待接入</span></td>
+        </tr>
+        <tr>
+          <td>苹果单产与灾损数据</td>
+          <td>分县单产、受灾面积、理赔记录</td>
+          <td>县级 / 保单级</td>
+          <td>年度</td>
+          <td>统计年鉴、保险公司与农业农村局</td>
+          <td><span class="lv lv-yellow">待接入</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">真实数据与示意数据的边界</div>
+          <div class="card-sub">写清边界，评审才敢信你的数字</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>类型</th><th>内容</th><th>标注方式</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="lv lv-green">真实数据</span></td>
+            <td>2025-03-22 至 03-29 逐小时气温、降水、湿度、风速；2015-2025 逐年花期冻害统计；预报接口实测样例</td>
+            <td>顶栏绿色徽标，图表下方注明来源与时间范围</td>
+          </tr>
+          <tr>
+            <td><span class="lv lv-yellow">模型输出</span></td>
+            <td>违约概率 PD、风险等级、预警分级</td>
+            <td>标注"模型输出"</td>
+          </tr>
+          <tr>
+            <td><span class="lv lv-yellow">示意值</span></td>
+            <td>乡镇分布中的非实测点位、农户与地块信息、保单与授信金额</td>
+            <td>标注"示意"或"待接入"</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="src">原则：凡不是真实观测或真实业务数据的，一律标注；宁可少一个好看的数字，也不要多一处说不清的来源。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">数据治理流程</div>
+          <div class="card-sub">从原始数据到可用指标，中间有五道处理</div>
+        </div>
+      </div>
+      <div class="list">
+        <div class="row"><div class="row-main"><div class="row-title"><span class="chip">1</span>采集</div><div class="row-desc">接口拉取与文件导入，统一时区与单位（如风速统一为 m/s）</div></div></div>
+        <div class="row"><div class="row-main"><div class="row-title"><span class="chip">2</span>质量控制</div><div class="row-desc">缺测标记、跳变检测、极值合理性检查，异常值回退到备用数据源</div></div></div>
+        <div class="row"><div class="row-main"><div class="row-title"><span class="chip">3</span>空间对齐</div><div class="row-desc">格点数据与地块边界匹配，结合高程做地形订正，消除山区暖偏差</div></div></div>
+        <div class="row"><div class="row-main"><div class="row-title"><span class="chip">4</span>指标计算</div><div class="row-desc">按物候期计算冻害累积量、有效积温、干旱指数等指标，保留计算参数版本</div></div></div>
+        <div class="row"><div class="row-main"><div class="row-title"><span class="chip">5</span>存证与服务</div><div class="row-desc">关键数据与指标结果上链存证，通过接口对外提供，供风控、定价与理赔调用</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">数据质量监控（示例）</div>
+          <div class="card-sub">数据质量直接决定指标可信度</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>监控项</th><th>方法</th><th>处置</th><th>目标值</th></tr></thead>
+        <tbody>
+          <tr><td>缺测</td><td>按小时统计缺失比例</td><td>标记并插补，超阈值则降级使用</td><td>可用率 ≥98%</td></tr>
+          <tr><td>延迟</td><td>对比数据时间戳与当前时间</td><td>超时告警，切换备用源</td><td>延迟 ≤2 小时</td></tr>
+          <tr><td>跳变</td><td>相邻时刻变化幅度检验</td><td>标记可疑值，人工复核</td><td>误报率 ≤5%</td></tr>
+          <tr><td>空间一致性</td><td>格点与站点交叉比对</td><td>偏差超阈值则调整订正参数</td><td>偏差 ≤1℃</td></tr>
+        </tbody>
+      </table>
+      <div class="src">说明：目标值为方案设计指标，需在试点中按实测调整。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">合规边界</div>
+          <div class="card-sub">数据越有用，越要讲清合规</div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="row"><div class="row-main"><div class="row-title">气象数据</div><div class="row-desc">课题阶段使用公开数据；业务化使用气象部门数据需签订合作协议，遵守气象数据对外提供的相关规定。</div></div></div>
+        <div class="row"><div class="row-main"><div class="row-title">个人信息</div><div class="row-desc">遵循《个人信息保护法》，采集前告知并取得授权，遵循最小必要原则，不超范围使用。</div></div></div>
+        <div class="row"><div class="row-main"><div class="row-title">数据安全</div><div class="row-desc">遵循《数据安全法》与银行保险机构数据安全相关要求，分级存储、权限管控、操作留痕。</div></div></div>
+        <div class="row"><div class="row-main"><div class="row-title">征信业务</div><div class="row-desc">不对外提供个人金融信息，不开展未经许可的征信业务；数据仅用于本平台风控与联合建模。</div></div></div>
+        <div class="row"><div class="row-main"><div class="row-title">遥感数据</div><div class="row-desc">使用公开卫星数据时遵守相应许可条款，标注数据来源。</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-head">
+      <div>
+        <div class="card-title">下一步数据工作清单</div>
+        <div class="card-sub">按优先级排序</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>优先级</th><th>工作</th><th>目的</th><th>预计周期</th></tr></thead>
+      <tbody>
+        <tr><td><span class="lv lv-red">高</span></td><td>接入果园自动气象站数据</td><td>消除格点对山区低温的暖偏差，提升冻害判定精度</td><td>1-2 个月</td></tr>
+        <tr><td><span class="lv lv-red">高</span></td><td>接入分县苹果单产与理赔记录</td><td>完成冻害命中率与赔付偏差校验</td><td>1 个月</td></tr>
+        <tr><td><span class="lv lv-yellow">中</span></td><td>接入 Sentinel-2 遥感长势</td><td>校验气象指标在作物上的实际体现</td><td>2-3 周</td></tr>
+        <tr><td><span class="lv lv-yellow">中</span></td><td>对接省级气象部门智能网格产品</td><td>提升实况与预报的分辨率与时效</td><td>1-2 个月</td></tr>
+        <tr><td><span class="lv lv-green">常规</span></td><td>建立数据质量监控与告警</td><td>保证指标输入稳定可靠</td><td>持续</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <div><b>数据声明：</b>本页清单中"已接入"部分为本原型实际取数来源（Open-Meteo / ERA5-Land），其余为规划数据源。</div>
+    <div><b>说明：</b>把数据边界讲清楚，比多给几个漂亮数字更有价值——评审最容易质疑的就是"你的数据哪来的"。</div>
+  </div>
+
+</main>
+</section><section class="view" id="view-policy" data-view="policy">
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">动态保单</h1>
+      <p class="page-desc">保额与保费跟着气象风险走：风险上升时保费上浮、保障同步提高。下面是同一个产区、同一规模的两户果农，在同一场寒潮下的<b>差异化定价</b>。</p>
+    </div>
+    <div class="page-head-right">
+      <span class="chip chip-sky">费率基准 5.0%</span>
+      <span class="chip">补贴比例 70%（示例）</span>
+      <span class="chip chip-gold">浮动上限 ±30%</span>
+    </div>
+  </div>
+
+  <div class="role-hint" id="policy-role-hint"></div>
+
+  <div class="col-3" style="margin-top:16px">
+    <div class="kpi">
+      <div class="kpi-label">保障收入（保额）</div>
+      <div class="kpi-value">51.0<small>万元</small></div>
+      <div class="kpi-foot">预期收入 60 万元 × 覆盖率 85%</div>
+    </div>
+    <div class="kpi" style="border-color:#f3c9c9">
+      <div class="kpi-label">动态保费（宜君县 · 红色）</div>
+      <div class="kpi-value" style="color:#b91c1c">3.44<small>万元</small></div>
+      <div class="kpi-foot">风险系数 1.35（冻害累积 13.8 ℃·h）</div>
+    </div>
+    <div class="kpi" style="border-color:#bfe3cd">
+      <div class="kpi-label">动态保费（印台区 · 绿色）</div>
+      <div class="kpi-value" style="color:#15803d">2.55<small>万元</small></div>
+      <div class="kpi-foot">风险系数 1.00（冻害累积 0.1 ℃·h）</div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">两户对比：同产区、同规模、同一天</div>
+          <div class="card-sub">差异只来自气象指标，这是差异化定价的核心证据</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>项目</th><th>农户 A · 宜君县尧生镇</th><th>农户 B · 印台区红土镇</th></tr></thead>
+        <tbody>
+          <tr><td>种植规模 / 品种</td><td>50 亩 · 富士苹果</td><td>50 亩 · 富士苹果</td></tr>
+          <tr><td>预期收入</td><td>60.0 万元</td><td>60.0 万元</td></tr>
+          <tr><td>冻害累积量（真实）</td><td><b style="color:#b91c1c">13.8 ℃·h</b></td><td><b style="color:#15803d">0.1 ℃·h</b></td></tr>
+          <tr><td>风险等级 / 系数</td><td><span class="lv lv-red">红色</span> 1.35</td><td><span class="lv lv-green">绿色</span> 1.00</td></tr>
+          <tr><td>保障收入（保额）</td><td>51.0 万元</td><td>51.0 万元</td></tr>
+          <tr><td>动态保费</td><td><b>3.44 万元</b></td><td><b>2.55 万元</b></td></tr>
+          <tr><td>政府补贴（70%）</td><td>2.41 万元</td><td>1.79 万元</td></tr>
+          <tr><td>农户自缴</td><td>1.03 万元</td><td>0.77 万元</td></tr>
+        </tbody>
+      </table>
+      <div class="src">说明：两户的预期收入、规模完全相同，保费差异完全由气象指标产生。补贴比例与费率基准为示例值，需按当地政策与备案费率确定。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">保费构成（宜君县示例）</div>
+          <div class="card-sub">基准费率 × 风险系数 → 补贴分摊 → 农户自缴</div>
+        </div>
+        <div class="card-head-right">单位：万元</div>
+      </div>
+      <div id="policy-chart-premium"></div>
+      <table style="margin-top:12px">
+        <thead><tr><th>步骤</th><th>计算</th><th>结果</th></tr></thead>
+        <tbody>
+          <tr><td>1 保障收入</td><td>60.0 × 85%</td><td>51.0 万元</td></tr>
+          <tr><td>2 基准保费</td><td>51.0 × 5.0%</td><td>2.55 万元</td></tr>
+          <tr><td>3 风险调整</td><td>2.55 × 风险系数 1.35</td><td>3.44 万元</td></tr>
+          <tr><td>4 补贴抵扣</td><td>3.44 × 70%</td><td>−2.41 万元</td></tr>
+          <tr><td>5 农户自缴</td><td>3.44 × 30%</td><td><b>1.03 万元</b></td></tr>
+        </tbody>
+      </table>
+      <div class="src">说明：动态调整幅度受浮动上限约束（示例 ±30%），避免保费剧烈波动影响农户参保意愿。</div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">保单要素（示例）</div>
+          <div class="card-sub">一份可执行、可核验的收入保险保单</div>
+        </div>
+        <div class="card-head-right">保单号 NFB-2025-TC-0001</div>
+      </div>
+      <table>
+        <tbody>
+          <tr><th>被保险人</th><td>农户 A（宜君县尧生镇）</td><th>承保标的</th><td>50 亩富士苹果</td></tr>
+          <tr><th>保障类型</th><td>收入保险（冻害指数触发）</td><th>保障收入</th><td>51.0 万元</td></tr>
+          <tr><th>触发条件</th><td>花蕾期冻害累积量超过约定阈值，或盛花期最低气温低于临界值</td><th>临界温度</th><td>−2.8℃（花蕾期）</td></tr>
+          <tr><th>保费</th><td>3.44 万元（农户自缴 1.03 万元）</td><th>保险期间</th><td>2025-03-01 至 2025-09-30</td></tr>
+          <tr><th>赔付方式</th><td>按约定产量与价格核算实际收入，差额赔付；双层责任不叠加</td><th>赔款用途</th><td>优先偿还银行贷款本息</td></tr>
+          <tr><th>存证方式</th><td>保单要素、风险评分、气象数据索引上链存证</td><th>数据来源</th><td>ERA5-Land / 自动站 / 智能网格预报</td></tr>
+        </tbody>
+      </table>
+      <div class="src">说明：条款要素为方案设计，正式版需按农业保险条款与费率备案要求执行。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">动态调整与双层责任</div>
+          <div class="card-sub">风险上升时保费上浮、保障同步提高；两类责任不叠加</div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">风险上升 → 保费上浮、保额提高</div>
+            <div class="row-desc">冻害累积量进入黄色区间时，风险系数上调，保费相应上浮，同时保障收入按约定同步提高，确保"保障始终覆盖贷款本息"。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">风险回落 → 保费下调</div>
+            <div class="row-desc">事件过后指标回落，风险系数回归基准，后续保单周期保费下调，体现"风险低时少缴费"。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">双层责任不叠加</div>
+            <div class="row-desc">同一作物季内，若冻害责任已触发赔付，价格波动责任自动失效；实际赔付取两者中较高者，并设总赔付上限。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">约束：保障收入 ≥ 贷款本息</div>
+            <div class="row-desc">这是保单能用于增信的前提。承保时系统自动校验，不满足则下调授信额度或提高覆盖率。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div><b>数据声明：</b>冻害累积量、最低气温来自 ERA5-Land 真实历史数据（2025-03-22 至 03-29）；保额、保费、风险系数、补贴比例与条款要素为方案设计值，需按当地政策与备案要求确定。</div>
+    <div><b>说明：</b>本页要证明的一件事：同一个产区、同一天，气象指标不同，保费就不同——这是气象数据直接产生金融定价能力的证据。</div>
+  </div>
+
+</main>
+</section><section class="view" id="view-credit" data-view="credit">
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">授信与放款</h1>
+      <p class="page-desc">把"保单锁定的预期收入"变成贷款依据，关键在于一条约束：<b>保障收入必须不小于贷款本息</b>。这一屏展示这条约束如何被校验、额度如何算出来、放款如何走完。</p>
+    </div>
+    <div class="page-head-right">
+      <span class="chip chip-sky">利率 4.0%（示例）</span>
+      <span class="chip">期限 12 个月</span>
+      <span class="chip chip-gold">折算系数 0.35</span>
+    </div>
+  </div>
+
+  <div class="role-hint" id="credit-role-hint"></div>
+
+  <div class="card" style="margin-top:16px;border-color:#bfe3cd;background:#f7fdf9">
+    <div class="card-head">
+      <div>
+        <div class="card-title">核心约束校验：保障收入 ≥ 贷款本息</div>
+        <div class="card-sub">这是"见保即贷"能成立的前提，承保时由系统自动校验</div>
+      </div>
+      <div class="card-head-right"><span class="lv lv-green">校验通过</span></div>
+    </div>
+    <div class="col-3">
+      <div class="kpi" style="box-shadow:none">
+        <div class="kpi-label">保障收入（保额）</div>
+        <div class="kpi-value" style="color:#15803d">51.0<small>万元</small></div>
+        <div class="kpi-foot">预期收入 60.0 万元 × 覆盖率 85%</div>
+      </div>
+      <div class="kpi" style="box-shadow:none">
+        <div class="kpi-label">贷款本息</div>
+        <div class="kpi-value">10.4<small>万元</small></div>
+        <div class="kpi-foot">贷款 10.0 万元 + 利息 0.4 万元（4.0%）</div>
+      </div>
+      <div class="kpi" style="box-shadow:none">
+        <div class="kpi-label">覆盖倍数</div>
+        <div class="kpi-value" style="color:#15803d">4.9<small>倍</small></div>
+        <div class="kpi-foot">51.0 ÷ 10.4，安全边际充足</div>
+      </div>
+    </div>
+    <div class="src">说明：覆盖倍数过低（如低于 1.5 倍）时，系统会下调授信额度或要求提高覆盖率；具体门槛需在风控制度中明确。</div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">授信额度计算过程</div>
+          <div class="card-sub">每一步都可追溯，避免"凭感觉批额度"</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>步骤</th><th>计算逻辑</th><th>结果</th></tr></thead>
+        <tbody>
+          <tr><td>1 预期收入</td><td>50 亩 × 3,000 kg/亩 × 4.0 元/kg</td><td>60.0 万元</td></tr>
+          <tr><td>2 收入波动</td><td>按历史波动率 CV 25% 估计标准差</td><td>σ = 15.0 万元</td></tr>
+          <tr><td>3 违约概率</td><td>PD = Φ((本息 − 均值) / σ)</td><td>8.1%（承保时）</td></tr>
+          <tr><td>4 保障收入</td><td>预期收入 × 覆盖率 85%</td><td>51.0 万元</td></tr>
+          <tr><td>5 建议额度</td><td>保障收入 × 折算系数 0.35</td><td>17.85 万元</td></tr>
+          <tr><td>6 实际放款</td><td>min(建议额度, 申请额度, 经营成本预算)</td><td><b>10.0 万元</b></td></tr>
+          <tr><td>7 约束校验</td><td>保障收入 ≥ 本息</td><td><span class="lv lv-green">通过</span></td></tr>
+        </tbody>
+      </table>
+      <div class="src">说明：折算系数、覆盖率与利率为方案设计值；正式版需与风控、合规部门共同确定并在系统中留痕。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">放款流程（六步）</div>
+          <div class="card-sub">从申请到放款，全程线上、数据驱动</div>
+        </div>
+        <div class="card-head-right">T+2 到账</div>
+      </div>
+      <div class="list">
+        <div class="row"><div class="row-main"><div class="row-title"><span class="chip">1</span>线上申请与数据授权</div><div class="row-desc">手机银行或兴农通提交申请，授权调用投保记录、地块信息与征信数据</div></div><div class="row-time">T+0</div></div>
+        <div class="row"><div class="row-main"><div class="row-title"><span class="chip">2</span>气象指标与收入评估</div><div class="row-desc">读取冻害累积量、最低气温等指标，输出收入分布与 PD</div></div><div class="row-time">自动</div></div>
+        <div class="row"><div class="row-main"><div class="row-title"><span class="chip">3</span>生成动态保单</div><div class="row-desc">保险公司按风险评分生成保单，保额与保费上链存证</div></div><div class="row-time">T+0</div></div>
+        <div class="row"><div class="row-main"><div class="row-title"><span class="chip">4</span>约束校验与审批</div><div class="row-desc">校验保障收入 ≥ 本息，系统给出额度建议与审批意见</div></div><div class="row-time">T+1</div></div>
+        <div class="row"><div class="row-main"><div class="row-title"><span class="chip">5</span>放款到账</div><div class="row-desc">资金进入农户账户，期限与农时匹配</div></div><div class="row-time">T+2</div></div>
+        <div class="row"><div class="row-main"><div class="row-title"><span class="chip">6</span>贷后动态监测</div><div class="row-desc">气象指标持续驱动 PD 更新，触发预警即生成工单</div></div><div class="row-time">全周期</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">风险定价与额度差异（同产区两户）</div>
+          <div class="card-sub">气象指标不同，PD 与授信条件相应不同</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>项目</th><th>农户 A · 宜君县</th><th>农户 B · 印台区</th></tr></thead>
+        <tbody>
+          <tr><td>冻害累积量</td><td><b style="color:#b91c1c">13.8 ℃·h</b></td><td><b style="color:#15803d">0.1 ℃·h</b></td></tr>
+          <tr><td>承保时 PD</td><td>8.1%</td><td>8.1%</td></tr>
+          <tr><td>事件后 PD</td><td><b>21.4%</b></td><td><b>8.4%</b></td></tr>
+          <tr><td>建议额度</td><td>17.85 万元</td><td>17.85 万元</td></tr>
+          <tr><td>实际放款</td><td>10.0 万元</td><td>10.0 万元</td></tr>
+          <tr><td>贷后动作</td><td>下调敞口、启动展期预案</td><td>常规监测</td></tr>
+        </tbody>
+      </table>
+      <div class="src">说明：两户承保条件相同，差异由事件后的气象指标驱动——这正是"贷后动态管理"的价值：银行在坏账形成之前就知道该重点看谁。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">贷后预警驱动的处置动作</div>
+          <div class="card-sub">预警不是通知客户经理"注意"，而是给出可执行方案</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>预警等级</th><th>PD 变化</th><th>银行动作</th><th>预期效果</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="lv lv-green">绿色</span></td>
+            <td>PD 在基准 1.8 倍以内</td>
+            <td>常规贷后监测，每周更新</td>
+            <td>风险在预期范围内</td>
+          </tr>
+          <tr>
+            <td><span class="lv lv-yellow">黄色</span></td>
+            <td>基准 1.8-2.5 倍</td>
+            <td>客户经理上门核实，建议提前部分还款或展期</td>
+            <td>预期损失降低约 28%</td>
+          </tr>
+          <tr>
+            <td><span class="lv lv-red">红色</span></td>
+            <td>超过基准 2.5 倍</td>
+            <td>下调敞口、协同保险启动赔付预案、办理展期</td>
+            <td>预期损失降低 48%-62%</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="src">说明：PD 倍数分档与损失降低幅度为方案设计值，需在试点中校准。</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div><b>数据声明：</b>冻害累积量与最低气温来自 ERA5-Land 真实历史数据；PD、额度、利率、折算系数与流程时限为方案设计值。</div>
+    <div><b>说明：</b>本页的核心是一句话——<b>只有保障收入不低于贷款本息，"见保即贷"才成立</b>。这条约束写进系统，比任何承诺都可靠。</div>
+  </div>
+
+</main>
+</section><section class="view" id="view-claims" data-view="claims">
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">理赔闭环</h1>
+      <p class="page-desc">从"农户报案、等待查勘"变成"指标触发、自动赔付"，并把赔款优先用于偿还贷款本息。下面是 2025 年 3 月真实寒潮事件在宜君县的一笔完整算账。</p>
+    </div>
+    <div class="page-head-right">
+      <span class="chip chip-sky">触发日 2025-03-29</span>
+      <span class="chip">结案 2025-04-05</span>
+      <span class="chip chip-gold">周期 7 天（含核实）</span>
+    </div>
+  </div>
+
+  <div class="role-hint" id="claims-role-hint"></div>
+
+  <div class="col-3" style="margin-top:16px">
+    <div class="kpi" style="border-color:#f3c9c9">
+      <div class="kpi-label">应赔付金额</div>
+      <div class="kpi-value" style="color:#b91c1c">12.0<small>万元</small></div>
+      <div class="kpi-foot">保障收入 51.0 − 实际收入 39.0</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">优先偿还贷款本息</div>
+      <div class="kpi-value">10.4<small>万元</small></div>
+      <div class="kpi-foot">本息全额覆盖，银行无坏账</div>
+    </div>
+    <div class="kpi" style="border-color:#bfe3cd">
+      <div class="kpi-label">余额到农户</div>
+      <div class="kpi-value" style="color:#15803d">1.6<small>万元</small></div>
+      <div class="kpi-foot">扣除本息后的剩余赔款</div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">一笔赔款的完整流向</div>
+          <div class="card-sub">农户 A · 宜君县尧生镇 · 50 亩富士苹果</div>
+        </div>
+        <div class="card-head-right">赔付率 100%（低于总赔付上限）</div>
+      </div>
+      <table>
+        <thead><tr><th>环节</th><th>计算</th><th>金额</th></tr></thead>
+        <tbody>
+          <tr><td>保障收入（保额）</td><td>预期收入 60.0 × 85%</td><td>51.0 万元</td></tr>
+          <tr><td>实际收入（收获后核算）</td><td>受灾减产 35%</td><td>39.0 万元</td></tr>
+          <tr><td>应赔付</td><td>51.0 − 39.0</td><td><b>12.0 万元</b></td></tr>
+          <tr><td>优先偿还贷款本息</td><td>本金 10.0 + 利息 0.4</td><td>−10.4 万元</td></tr>
+          <tr><td>剩余赔款到农户</td><td>12.0 − 10.4</td><td><b>1.6 万元</b></td></tr>
+          <tr><td>农户最终到手（含销售收入）</td><td>39.0 + 1.6</td><td>40.6 万元</td></tr>
+        </tbody>
+      </table>
+      <div class="src">说明：赔款按保单约定优先用于偿还贷款本息，其余部分支付至农户账户。实际收入按约定产量与价格口径核算。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">理赔流程（四步）</div>
+          <div class="card-sub">指标触发，合约执行，全程留痕</div>
+        </div>
+      </div>
+      <div class="list">
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title"><span class="lv lv-red">1</span>指标触发</div>
+            <div class="row-desc">03-29 06:00 花蕾期冻害累积量 13.8 ℃·h 越过红色阈值，系统记录事件并锁定数据快照</div>
+          </div>
+          <div class="row-time">自动</div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title"><span class="lv lv-yellow">2</span>合约校验</div>
+            <div class="row-desc">核对保单要素、物候期、临界温度与数据来源，确认满足赔付条件；人工仅做复核，不介入定损</div>
+          </div>
+          <div class="row-time">T+1</div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title"><span class="lv lv-yellow">3</span>赔款优先还贷</div>
+            <div class="row-desc">赔款划入约定账户，优先偿还贷款本息 10.4 万元，系统同步更新贷款状态</div>
+          </div>
+          <div class="row-time">T+3</div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title"><span class="lv lv-green">4</span>余额到账与结案</div>
+            <div class="row-desc">剩余 1.6 万元支付至农户账户，生成结案报告与赔付凭证并上链存证</div>
+          </div>
+          <div class="row-time">T+7</div>
+        </div>
+      </div>
+      <div class="src">说明：时限为方案设计值；正式版需在合作协议中约定各环节责任人与时限。</div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">与传统理赔的差别</div>
+          <div class="card-sub">对比的是"农户体验"和"银行能否及时收回贷款"</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>环节</th><th>传统收入保险</th><th>农丰保</th></tr></thead>
+        <tbody>
+          <tr><td>报案</td><td>农户发现损失后自行报案</td><td>指标越阈自动触发，无需报案</td></tr>
+          <tr><td>定损</td><td>保险公司派员现场查勘、抽样测产</td><td>按气象指标与约定产量口径核算</td></tr>
+          <tr><td>周期</td><td>通常数月，跨收获季</td><td>触发后 7 天内结案</td></tr>
+          <tr><td>争议点</td><td>减产原因与程度难以举证</td><td>指标与数据来源公开可核验</td></tr>
+          <tr><td>对银行</td><td>坏账已形成才知道结果</td><td>赔款优先偿还本息，贷后风险提前落地</td></tr>
+          <tr><td>农户体验</td><td>等待、往返、沟通成本高</td><td>赔款直接到账，余额清晰可查</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">"赔款优先还贷"怎么实现</div>
+          <div class="card-sub">保险金请求权属于农户，银行没有天然优先受偿权，必须用法律结构安排</div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">方案一：三方协议约定划付</div>
+            <div class="row-desc">银行、保险公司、农户签订三方协议，约定赔款直接划付至还贷专户，剩余部分再支付给农户。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">方案二：保单批注约定支付路径</div>
+            <div class="row-desc">在保单上批注赔付资金的支付账户与顺序，作为承保条件之一。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">方案三：保险金请求权质押</div>
+            <div class="row-desc">农户将保险金请求权质押给银行并办理登记，作为贷款的担保措施之一。</div>
+          </div>
+        </div>
+        <div class="row" style="background:#fff8e8;border-color:#f2dcae">
+          <div class="row-main">
+            <div class="row-title">合规提示</div>
+            <div class="row-desc">以上结构需经银行法律合规部门与保险公司确认后执行，并在合同与批单中明确，不宜仅依赖系统技术实现。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div><b>数据声明：</b>冻害累积量与最低气温来自 ERA5-Land 真实历史数据；保额、赔款、实际收入、期限与流程为方案设计值。</div>
+    <div><b>说明：</b>本页要证明的一件事：当风险由气象指标定义时，理赔可以做到自动、透明、可预期，而这一点正是银行愿意接受"保单增信"的前提。</div>
+  </div>
+
+</main>
+</section><section class="view" id="view-about" data-view="about">
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">关于我们</h1>
+      <p class="page-desc">农丰保是一个以气象监测为核心的农业风险平台：先把天气看准，再把风险算清，最后把风险变成农户的信用。</p>
+    </div>
+  </div>
+
+  <div class="col-2">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">平台定位</div>
+          <div class="card-sub">一句话说清我们在做什么</div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="row" style="background:#f2f9f5;border-color:#cfe6da">
+          <div class="row-main">
+            <div class="row-title">以气象数据为起点，把风险变成可定价、可授信、可赔付的信号</div>
+            <div class="row-desc">气象要素 → 作物指标 → 违约概率 PD → 动态保单 → 授信放款 → 自动赔付。平台的价值不在于"能看天气"，而在于把天气翻译成金融能用的语言。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">要解决的问题</div>
+            <div class="row-desc">保险端不敢保、银行端不敢贷，根子上是缺少一把"可核验的风险尺子"。气象指标可以做成这把尺子。</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">为什么选铜川苹果作为原型</div>
+            <div class="row-desc">陕西苹果产区有真实的花期冻害风险，2025 年 3 月就发生过一次可核验的寒潮事件；同时苹果是当地主导产业，工行已有"苹果兴农贷"等落地基础，气象指标可以立刻接入现有产品。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">方法说明</div>
+          <div class="card-sub">平台的计算链条</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>环节</th><th>做法</th><th>产出</th></tr></thead>
+        <tbody>
+          <tr><td>1 气象监测</td><td>多源气象数据接入与质量控制</td><td>逐小时要素与指标</td></tr>
+          <tr><td>2 指标计算</td><td>按物候期计算冻害累积量、积温、干旱指数等</td><td>作物风险指标</td></tr>
+          <tr><td>3 风险量化</td><td>收入分布估计 + 联合分布 + 违约概率</td><td>PD 与收入概率分布</td></tr>
+          <tr><td>4 保险定价</td><td>保障收入 × 基准费率 × 风险系数</td><td>保额与动态保费</td></tr>
+          <tr><td>5 授信放款</td><td>保障收入 × 折算系数，校验 ≥ 本息</td><td>额度与放款</td></tr>
+          <tr><td>6 自动赔付</td><td>指标触发 → 合约校验 → 赔款优先还贷</td><td>理赔结案</td></tr>
+        </tbody>
+      </table>
+      <div class="src">说明：第 1-2 步使用真实气象数据；第 3-6 步为模型与方案设计，需在试点中校准。</div>
+    </div>
+  </div>
+
+  <div class="col-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">团队分工</div>
+          <div class="card-sub">三人小组 + 指导教师</div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>姓名</th><th>角色</th><th>负责内容</th></tr></thead>
+        <tbody>
+          <tr><td>夏颢桐</td><td>策划与统筹</td><td>平台架构与整体逻辑设计、商业与可行性论证、进度统筹</td></tr>
+          <tr><td>刘格辰</td><td>行业与文献</td><td>产区痛点调研、政策与文献梳理、需求验证</td></tr>
+          <tr><td>杨一恒</td><td>模型工程</td><td>指标与模型设计、数据处理与平台原型开发</td></tr>
+          <tr><td>李冰（指导教师）</td><td>学术指导</td><td>数字普惠金融与农业金融方向指导，把控方案的科学性与可行性</td></tr>
+        </tbody>
+      </table>
+      <div class="src">说明：团队信息可在正式版本中按参赛要求补充荣誉、经历与照片。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">数据来源</div>
+          <div class="card-sub">本原型使用的真实数据</div>
+        </div>
+      </div>
+      <table>
+        <tbody>
+          <tr><th>历史气象</th><td>Open-Meteo 历史接口（ERA5-Land 再分析，约 9km 格点），2015-2025 年</td></tr>
+          <tr><th>预报气象</th><td>Open-Meteo 预报接口，未来 10 天逐小时与逐日</td></tr>
+          <tr><th>研究区域</th><td>陕西省铜川市（印台区、宜君县苹果主产区，坐标为近似中心点）</td></tr>
+          <tr><th>关键事件</th><td>2025-03-27 至 03-29 倒春寒：宜君县最低 −4.7℃，印台区最低 −2.9℃</td></tr>
+          <tr><th>计算口径</th><td>冻害累积量 FT = Σ max(0, 临界温度 − 逐小时气温)，花蕾期临界温度取 −2.8℃</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-head">
+      <div>
+        <div class="card-title">三分钟演示动线</div>
+        <div class="card-sub">答辩时按这个顺序点，一条链讲完</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>时间</th><th>页面</th><th>讲什么</th></tr></thead>
+      <tbody>
+        <tr><td>0:00-0:30</td><td><a href="index.html">监测总览</a></td><td>铜川产区正在发生什么；宜君红色、印台绿色，同一天两个等级</td></tr>
+        <tr><td>0:30-1:00</td><td><a href="realtime.html">实时监测</a></td><td>真实气温曲线跌破 −2.8℃ 临界线，冻害开始累积</td></tr>
+        <tr><td>1:00-1:30</td><td><a href="forecast.html">预报与提前预警</a></td><td>提前 10 天发出预警，动作清单已经排好</td></tr>
+        <tr><td>1:30-2:00</td><td><a href="alert.html">阈值与预警</a> → <a href="history.html">历史与回测</a></td><td>阈值可调、预警可回测；11 年只出一次，低频高损</td></tr>
+        <tr><td>2:00-2:30</td><td><a href="policy.html">动态保单</a></td><td>同产区同规模，保费差 0.89 万元，差异完全来自气象指标</td></tr>
+        <tr><td>2:30-2:50</td><td><a href="credit.html">授信放款</a></td><td>保障收入 51 万 ≥ 本息 10.4 万，约束校验通过，放款</td></tr>
+        <tr><td>2:50-3:00</td><td><a href="claims.html">理赔闭环</a></td><td>赔款 12 万优先还贷，银行零坏账，农户到手 1.6 万</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:16px;border-color:#f2dcae;background:#fffdf7">
+    <div class="card-head">
+      <div>
+        <div class="card-title">免责声明</div>
+      </div>
+    </div>
+    <p class="note" style="font-size:13.5px">
+      本平台为参赛研究原型，用于展示"气象数据驱动农业风险定价与信贷决策"的方法与可行性。
+      页面中带绿色徽标的内容为公开真实气象数据（来源：Open-Meteo / ERA5-Land）；其余标注"示意""待接入""方案设计值"的内容为研究设定，不代表真实业务数据，也不构成任何保险、信贷或投资建议。
+      若本原型投入实际业务，需完成数据合作协议签署、保险条款与费率备案、风控与合规审查等前置程序。
+    </p>
+  </div>
+
+  <div class="footer">
+    <div><b>农丰保 · 智能气象保险科技平台</b>｜面向铜川苹果产区的气象监测与风险定价原型</div>
+    <div>本原型为纯静态网页，无外部依赖，可离线演示；全部数据集中在 assets/js 目录内，便于替换与复核。</div>
+  </div>
+
+</main>
+</section>
+
+<script>
+/* 铜川真实气象数据（生成文件，勿手改）
+   来源：Open-Meteo 历史接口（ERA5-Land，约 9km 格点）
+   窗口：2025-03-25 00:00 ~ 2025-03-31 23:00（真实历史数据）
+   冻害临界温度：-2.8 ℃（苹果花序分离至花蕾期，参考文献值） */
+const REAL_DATA = {"source": "Open-Meteo 历史接口（ERA5-Land，约 9km 格点）", "window": "2025-03-25 00:00 ~ 2025-03-31 23:00（真实历史数据）", "tcrit": -2.8, "yijun": {"time": ["2025-03-22T07:00", "2025-03-22T08:00", "2025-03-22T09:00", "2025-03-22T10:00", "2025-03-22T11:00", "2025-03-22T12:00", "2025-03-22T13:00", "2025-03-22T14:00", "2025-03-22T15:00", "2025-03-22T16:00", "2025-03-22T17:00", "2025-03-22T18:00", "2025-03-22T19:00", "2025-03-22T20:00", "2025-03-22T21:00", "2025-03-22T22:00", "2025-03-22T23:00", "2025-03-23T00:00", "2025-03-23T01:00", "2025-03-23T02:00", "2025-03-23T03:00", "2025-03-23T04:00", "2025-03-23T05:00", "2025-03-23T06:00", "2025-03-23T07:00", "2025-03-23T08:00", "2025-03-23T09:00", "2025-03-23T10:00", "2025-03-23T11:00", "2025-03-23T12:00", "2025-03-23T13:00", "2025-03-23T14:00", "2025-03-23T15:00", "2025-03-23T16:00", "2025-03-23T17:00", "2025-03-23T18:00", "2025-03-23T19:00", "2025-03-23T20:00", "2025-03-23T21:00", "2025-03-23T22:00", "2025-03-23T23:00", "2025-03-24T00:00", "2025-03-24T01:00", "2025-03-24T02:00", "2025-03-24T03:00", "2025-03-24T04:00", "2025-03-24T05:00", "2025-03-24T06:00", "2025-03-24T07:00", "2025-03-24T08:00", "2025-03-24T09:00", "2025-03-24T10:00", "2025-03-24T11:00", "2025-03-24T12:00", "2025-03-24T13:00", "2025-03-24T14:00", "2025-03-24T15:00", "2025-03-24T16:00", "2025-03-24T17:00", "2025-03-24T18:00", "2025-03-24T19:00", "2025-03-24T20:00", "2025-03-24T21:00", "2025-03-24T22:00", "2025-03-24T23:00", "2025-03-25T00:00", "2025-03-25T01:00", "2025-03-25T02:00", "2025-03-25T03:00", "2025-03-25T04:00", "2025-03-25T05:00", "2025-03-25T06:00", "2025-03-25T07:00", "2025-03-25T08:00", "2025-03-25T09:00", "2025-03-25T10:00", "2025-03-25T11:00", "2025-03-25T12:00", "2025-03-25T13:00", "2025-03-25T14:00", "2025-03-25T15:00", "2025-03-25T16:00", "2025-03-25T17:00", "2025-03-25T18:00", "2025-03-25T19:00", "2025-03-25T20:00", "2025-03-25T21:00", "2025-03-25T22:00", "2025-03-25T23:00", "2025-03-26T00:00", "2025-03-26T01:00", "2025-03-26T02:00", "2025-03-26T03:00", "2025-03-26T04:00", "2025-03-26T05:00", "2025-03-26T06:00", "2025-03-26T07:00", "2025-03-26T08:00", "2025-03-26T09:00", "2025-03-26T10:00", "2025-03-26T11:00", "2025-03-26T12:00", "2025-03-26T13:00", "2025-03-26T14:00", "2025-03-26T15:00", "2025-03-26T16:00", "2025-03-26T17:00", "2025-03-26T18:00", "2025-03-26T19:00", "2025-03-26T20:00", "2025-03-26T21:00", "2025-03-26T22:00", "2025-03-26T23:00", "2025-03-27T00:00", "2025-03-27T01:00", "2025-03-27T02:00", "2025-03-27T03:00", "2025-03-27T04:00", "2025-03-27T05:00", "2025-03-27T06:00", "2025-03-27T07:00", "2025-03-27T08:00", "2025-03-27T09:00", "2025-03-27T10:00", "2025-03-27T11:00", "2025-03-27T12:00", "2025-03-27T13:00", "2025-03-27T14:00", "2025-03-27T15:00", "2025-03-27T16:00", "2025-03-27T17:00", "2025-03-27T18:00", "2025-03-27T19:00", "2025-03-27T20:00", "2025-03-27T21:00", "2025-03-27T22:00", "2025-03-27T23:00", "2025-03-28T00:00", "2025-03-28T01:00", "2025-03-28T02:00", "2025-03-28T03:00", "2025-03-28T04:00", "2025-03-28T05:00", "2025-03-28T06:00", "2025-03-28T07:00", "2025-03-28T08:00", "2025-03-28T09:00", "2025-03-28T10:00", "2025-03-28T11:00", "2025-03-28T12:00", "2025-03-28T13:00", "2025-03-28T14:00", "2025-03-28T15:00", "2025-03-28T16:00", "2025-03-28T17:00", "2025-03-28T18:00", "2025-03-28T19:00", "2025-03-28T20:00", "2025-03-28T21:00", "2025-03-28T22:00", "2025-03-28T23:00", "2025-03-29T00:00", "2025-03-29T01:00", "2025-03-29T02:00", "2025-03-29T03:00", "2025-03-29T04:00", "2025-03-29T05:00", "2025-03-29T06:00"], "labels": ["03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/29", "03/29", "03/29", "03/29", "03/29", "03/29", "03/29"], "temp": [3.4, 6.3, 11.1, 13.0, 14.6, 15.6, 16.6, 17.0, 17.5, 17.3, 16.9, 15.2, 10.6, 8.8, 8.7, 7.7, 8.2, 7.1, 7.5, 6.9, 6.3, 6.6, 6.6, 6.7, 6.2, 8.0, 11.9, 14.5, 15.5, 16.5, 17.4, 17.9, 19.0, 18.8, 18.8, 16.8, 13.0, 11.6, 12.2, 11.6, 11.7, 11.9, 11.6, 10.6, 10.0, 9.5, 9.3, 8.4, 7.0, 8.9, 14.4, 18.0, 20.3, 21.7, 22.8, 23.5, 23.3, 23.1, 22.5, 19.4, 14.6, 14.5, 15.3, 15.3, 15.0, 14.8, 15.0, 14.7, 14.2, 13.7, 9.6, 7.9, 8.2, 10.5, 14.6, 16.6, 19.1, 21.5, 23.2, 23.8, 23.6, 22.8, 21.9, 20.1, 16.1, 14.1, 14.4, 13.9, 13.8, 13.6, 13.5, 13.4, 12.4, 11.1, 10.3, 10.7, 10.5, 10.6, 12.7, 14.0, 14.5, 16.0, 16.9, 17.1, 17.2, 16.1, 15.4, 14.1, 11.7, 10.4, 10.1, 8.9, 7.5, 5.9, 4.3, 3.2, 2.3, 1.2, 0.5, -0.4, -0.5, 0.1, -0.8, -1.0, -0.8, 1.3, 2.1, 2.1, 3.4, 4.2, 5.4, 5.0, 3.7, 2.0, 0.9, 0.1, -1.3, -1.8, -2.1, -2.7, -3.1, -3.5, -4.1, -4.7, -4.7, -4.1, -2.6, -1.6, 0.1, 1.8, 2.6, 3.6, 4.2, 4.3, 3.9, 2.9, 0.6, -0.9, -1.5, -2.5, -3.1, -3.3, -3.4, -3.8, -3.5, -3.7, -4.0, -4.0], "precip": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0, 0, 0.1, 0.2, 0.1, 0.2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "humid": [29, 29, 20, 15, 12, 12, 13, 12, 12, 12, 13, 28, 30, 38, 39, 39, 27, 28, 27, 26, 25, 25, 25, 28, 31, 31, 26, 21, 14, 13, 12, 13, 10, 10, 10, 13, 18, 20, 19, 19, 17, 15, 14, 15, 15, 16, 17, 19, 22, 27, 24, 15, 12, 10, 10, 10, 10, 10, 11, 18, 29, 27, 23, 24, 26, 32, 33, 31, 30, 28, 39, 49, 44, 37, 28, 26, 22, 19, 18, 19, 21, 23, 24, 29, 37, 43, 40, 39, 41, 42, 43, 43, 46, 51, 54, 53, 53, 53, 36, 27, 23, 16, 15, 16, 17, 17, 17, 20, 23, 24, 24, 26, 27, 27, 28, 29, 30, 30, 31, 38, 36, 28, 47, 47, 46, 29, 22, 23, 23, 22, 21, 22, 25, 26, 29, 29, 32, 32, 31, 33, 34, 29, 24, 22, 20, 18, 16, 15, 15, 15, 15, 15, 15, 15, 15, 15, 20, 22, 26, 29, 33, 33, 32, 34, 31, 37, 36, 34], "wind": [1.1, 1.1, 1.6, 1.7, 1.8, 2.2, 2.6, 2.9, 3.2, 3.4, 2.6, 0.3, 2.6, 3.7, 2.9, 2.7, 3.1, 1.7, 2.6, 2.9, 3.2, 3.1, 3.2, 2.9, 3.2, 3.6, 3.1, 5.7, 6.6, 6.5, 6.6, 6.9, 6.9, 7.2, 6.2, 4.5, 3.4, 4.3, 4.8, 4.6, 5.2, 4.9, 4.6, 4.1, 4.0, 3.8, 3.5, 2.9, 2.2, 1.9, 1.9, 2.0, 1.3, 1.5, 3.4, 5.3, 6.0, 5.5, 4.6, 2.4, 4.2, 4.8, 5.1, 5.8, 5.8, 6.5, 7.0, 6.2, 5.9, 4.8, 1.6, 2.4, 2.1, 2.9, 0.9, 1.3, 0.6, 1.6, 2.5, 3.6, 4.4, 4.9, 4.7, 3.8, 3.4, 3.0, 3.5, 3.6, 4.0, 3.8, 4.1, 3.6, 3.0, 1.5, 1.7, 3.4, 5.5, 4.8, 6.0, 6.5, 6.5, 6.4, 6.1, 5.9, 5.7, 5.7, 5.8, 4.9, 5.1, 5.7, 6.2, 6.8, 6.9, 7.3, 7.2, 6.2, 5.7, 6.3, 7.1, 7.4, 5.9, 6.6, 6.6, 5.8, 5.3, 5.5, 6.4, 5.9, 4.9, 4.8, 5.2, 5.1, 5.6, 6.4, 5.6, 5.9, 6.5, 6.1, 5.8, 4.7, 5.2, 6.2, 5.6, 5.4, 5.6, 5.4, 5.6, 5.4, 4.9, 5.1, 4.9, 4.8, 4.6, 4.4, 4.4, 4.4, 3.3, 3.4, 2.4, 1.6, 1.5, 1.7, 1.6, 1.1, 1.1, 0.7, 0.7, 1.1], "frostAcc": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 1.0, 2.3, 4.2, 6.1, 7.4, 7.4, 7.4, 7.4, 7.4, 7.4, 7.4, 7.4, 7.4, 7.4, 7.4, 7.4, 7.4, 7.4, 7.4, 7.7, 8.2, 8.8, 9.8, 10.5, 11.4, 12.6, 13.8], "days": ["2025-03-22", "2025-03-23", "2025-03-24", "2025-03-25", "2025-03-26", "2025-03-27", "2025-03-28", "2025-03-29"], "dayLabels": ["03/22", "03/23", "03/24", "03/25", "03/26", "03/27", "03/28", "03/29"], "dailyMin": [3.4, 6.2, 7.0, 7.9, 7.5, -1.3, -4.7, -4.0], "dailyMax": [17.5, 19.0, 23.5, 23.8, 17.2, 5.9, 4.3, -3.3], "dailyRain": [0.0, 0.0, 0.0, 0.0, 0.0, 1.3, 0.0, 0.0], "dailyFrost": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.7, 13.8], "minTemp": -4.7, "frostEnd": 13.8}, "yintai": {"time": ["2025-03-22T07:00", "2025-03-22T08:00", "2025-03-22T09:00", "2025-03-22T10:00", "2025-03-22T11:00", "2025-03-22T12:00", "2025-03-22T13:00", "2025-03-22T14:00", "2025-03-22T15:00", "2025-03-22T16:00", "2025-03-22T17:00", "2025-03-22T18:00", "2025-03-22T19:00", "2025-03-22T20:00", "2025-03-22T21:00", "2025-03-22T22:00", "2025-03-22T23:00", "2025-03-23T00:00", "2025-03-23T01:00", "2025-03-23T02:00", "2025-03-23T03:00", "2025-03-23T04:00", "2025-03-23T05:00", "2025-03-23T06:00", "2025-03-23T07:00", "2025-03-23T08:00", "2025-03-23T09:00", "2025-03-23T10:00", "2025-03-23T11:00", "2025-03-23T12:00", "2025-03-23T13:00", "2025-03-23T14:00", "2025-03-23T15:00", "2025-03-23T16:00", "2025-03-23T17:00", "2025-03-23T18:00", "2025-03-23T19:00", "2025-03-23T20:00", "2025-03-23T21:00", "2025-03-23T22:00", "2025-03-23T23:00", "2025-03-24T00:00", "2025-03-24T01:00", "2025-03-24T02:00", "2025-03-24T03:00", "2025-03-24T04:00", "2025-03-24T05:00", "2025-03-24T06:00", "2025-03-24T07:00", "2025-03-24T08:00", "2025-03-24T09:00", "2025-03-24T10:00", "2025-03-24T11:00", "2025-03-24T12:00", "2025-03-24T13:00", "2025-03-24T14:00", "2025-03-24T15:00", "2025-03-24T16:00", "2025-03-24T17:00", "2025-03-24T18:00", "2025-03-24T19:00", "2025-03-24T20:00", "2025-03-24T21:00", "2025-03-24T22:00", "2025-03-24T23:00", "2025-03-25T00:00", "2025-03-25T01:00", "2025-03-25T02:00", "2025-03-25T03:00", "2025-03-25T04:00", "2025-03-25T05:00", "2025-03-25T06:00", "2025-03-25T07:00", "2025-03-25T08:00", "2025-03-25T09:00", "2025-03-25T10:00", "2025-03-25T11:00", "2025-03-25T12:00", "2025-03-25T13:00", "2025-03-25T14:00", "2025-03-25T15:00", "2025-03-25T16:00", "2025-03-25T17:00", "2025-03-25T18:00", "2025-03-25T19:00", "2025-03-25T20:00", "2025-03-25T21:00", "2025-03-25T22:00", "2025-03-25T23:00", "2025-03-26T00:00", "2025-03-26T01:00", "2025-03-26T02:00", "2025-03-26T03:00", "2025-03-26T04:00", "2025-03-26T05:00", "2025-03-26T06:00", "2025-03-26T07:00", "2025-03-26T08:00", "2025-03-26T09:00", "2025-03-26T10:00", "2025-03-26T11:00", "2025-03-26T12:00", "2025-03-26T13:00", "2025-03-26T14:00", "2025-03-26T15:00", "2025-03-26T16:00", "2025-03-26T17:00", "2025-03-26T18:00", "2025-03-26T19:00", "2025-03-26T20:00", "2025-03-26T21:00", "2025-03-26T22:00", "2025-03-26T23:00", "2025-03-27T00:00", "2025-03-27T01:00", "2025-03-27T02:00", "2025-03-27T03:00", "2025-03-27T04:00", "2025-03-27T05:00", "2025-03-27T06:00", "2025-03-27T07:00", "2025-03-27T08:00", "2025-03-27T09:00", "2025-03-27T10:00", "2025-03-27T11:00", "2025-03-27T12:00", "2025-03-27T13:00", "2025-03-27T14:00", "2025-03-27T15:00", "2025-03-27T16:00", "2025-03-27T17:00", "2025-03-27T18:00", "2025-03-27T19:00", "2025-03-27T20:00", "2025-03-27T21:00", "2025-03-27T22:00", "2025-03-27T23:00", "2025-03-28T00:00", "2025-03-28T01:00", "2025-03-28T02:00", "2025-03-28T03:00", "2025-03-28T04:00", "2025-03-28T05:00", "2025-03-28T06:00", "2025-03-28T07:00", "2025-03-28T08:00", "2025-03-28T09:00", "2025-03-28T10:00", "2025-03-28T11:00", "2025-03-28T12:00", "2025-03-28T13:00", "2025-03-28T14:00", "2025-03-28T15:00", "2025-03-28T16:00", "2025-03-28T17:00", "2025-03-28T18:00", "2025-03-28T19:00", "2025-03-28T20:00", "2025-03-28T21:00", "2025-03-28T22:00", "2025-03-28T23:00", "2025-03-29T00:00", "2025-03-29T01:00", "2025-03-29T02:00", "2025-03-29T03:00", "2025-03-29T04:00", "2025-03-29T05:00", "2025-03-29T06:00"], "labels": ["03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/22", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/23", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/24", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/25", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/26", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/27", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/28", "03/29", "03/29", "03/29", "03/29", "03/29", "03/29", "03/29"], "temp": [4.1, 6.9, 12.1, 15.6, 17.2, 17.9, 18.3, 18.6, 18.6, 18.5, 17.4, 15.2, 13.3, 12.7, 13.2, 12.8, 9.8, 9.0, 12.6, 11.8, 11.3, 11.0, 10.9, 10.7, 10.8, 11.0, 13.8, 16.8, 18.3, 18.8, 19.8, 20.5, 20.9, 21.5, 20.9, 19.2, 15.1, 13.4, 12.8, 11.0, 9.7, 9.3, 8.6, 8.2, 7.8, 7.1, 6.6, 6.1, 5.9, 8.9, 15.1, 18.5, 20.6, 22.0, 22.8, 23.0, 22.7, 22.5, 21.7, 19.4, 16.5, 15.8, 16.6, 16.0, 15.2, 14.0, 13.2, 12.8, 11.0, 9.3, 7.8, 8.5, 9.7, 12.2, 17.0, 20.3, 22.0, 23.0, 23.7, 24.1, 24.3, 24.0, 23.3, 20.7, 17.1, 15.4, 14.7, 14.3, 13.8, 13.4, 13.7, 14.6, 14.8, 15.1, 11.7, 10.7, 11.5, 14.2, 16.7, 17.8, 18.7, 20.0, 20.0, 21.0, 20.8, 20.0, 18.8, 17.2, 15.1, 14.1, 14.0, 12.9, 11.4, 9.8, 8.2, 7.0, 6.0, 5.1, 4.5, 3.6, 2.5, 3.2, 3.6, 3.4, 3.4, 4.1, 5.9, 6.1, 6.5, 7.1, 7.6, 8.5, 7.5, 6.3, 4.5, 3.3, 2.0, 1.2, 0.9, -0.0, -1.6, -2.0, -2.4, -2.9, -2.2, -0.7, 1.2, 2.3, 3.4, 4.3, 5.8, 6.2, 6.8, 7.2, 7.4, 6.6, 2.9, 1.2, 0.5, -0.5, -1.5, -0.9, 0.3, -0.1, -0.5, -0.1, -0.6, -1.4], "precip": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "humid": [36, 40, 42, 19, 16, 17, 18, 18, 19, 20, 23, 43, 37, 35, 31, 30, 37, 36, 18, 19, 19, 19, 20, 23, 27, 44, 31, 27, 18, 16, 14, 13, 13, 11, 13, 15, 19, 22, 25, 27, 28, 27, 27, 26, 26, 27, 27, 30, 33, 40, 47, 22, 18, 15, 15, 17, 17, 19, 21, 29, 29, 25, 24, 25, 27, 33, 40, 43, 49, 54, 57, 50, 45, 39, 34, 27, 23, 24, 25, 25, 25, 25, 27, 49, 48, 49, 48, 45, 46, 48, 47, 44, 43, 42, 53, 57, 56, 48, 39, 26, 23, 20, 16, 16, 16, 17, 18, 19, 20, 20, 20, 22, 23, 24, 24, 24, 25, 24, 25, 28, 31, 26, 40, 40, 37, 37, 24, 21, 22, 22, 21, 21, 23, 23, 31, 26, 28, 28, 27, 29, 37, 37, 34, 30, 24, 19, 15, 15, 15, 15, 15, 15, 15, 15, 16, 18, 32, 32, 37, 38, 45, 38, 27, 28, 28, 26, 25, 27], "wind": [1.6, 1.0, 1.4, 0.3, 1.5, 2.4, 3.3, 3.4, 3.3, 2.8, 2.5, 1.0, 0.9, 0.8, 0.2, 0.2, 1.2, 3.4, 5.1, 4.9, 4.6, 4.9, 4.1, 3.9, 2.7, 0.8, 1.2, 3.5, 6.6, 6.1, 6.1, 6.2, 6.6, 6.4, 5.8, 4.0, 2.4, 2.0, 1.3, 1.6, 1.9, 2.1, 2.0, 2.0, 1.9, 1.4, 1.3, 1.2, 0.9, 0.4, 0.8, 1.4, 1.9, 3.0, 3.8, 4.5, 4.9, 4.6, 4.0, 1.9, 1.9, 2.1, 1.6, 1.8, 2.1, 2.1, 1.4, 1.4, 1.2, 0.9, 1.3, 1.6, 3.0, 3.8, 2.8, 1.9, 2.1, 2.4, 2.6, 2.9, 3.5, 3.0, 2.1, 1.1, 1.2, 1.4, 1.4, 1.6, 1.5, 1.1, 0.9, 0.7, 0.7, 0.1, 1.4, 0.7, 2.5, 3.8, 5.8, 8.2, 7.7, 6.4, 5.6, 5.4, 5.2, 4.4, 5.1, 5.0, 5.4, 7.0, 6.9, 8.6, 9.8, 9.4, 10.3, 9.6, 9.9, 10.8, 9.5, 8.5, 8.1, 6.4, 8.0, 7.6, 7.2, 6.6, 5.9, 4.9, 4.0, 3.5, 3.1, 2.4, 2.4, 4.6, 2.2, 4.8, 5.2, 3.7, 3.7, 2.6, 1.4, 1.8, 1.9, 1.8, 1.9, 2.4, 4.0, 3.5, 3.0, 2.3, 1.6, 1.4, 0.6, 0.8, 0.6, 1.1, 1.2, 1.5, 0.4, 0.9, 1.2, 2.8, 2.8, 3.3, 3.3, 3.4, 3.6, 3.0], "frostAcc": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], "days": ["2025-03-22", "2025-03-23", "2025-03-24", "2025-03-25", "2025-03-26", "2025-03-27", "2025-03-28", "2025-03-29"], "dayLabels": ["03/22", "03/23", "03/24", "03/25", "03/26", "03/27", "03/28", "03/29"], "dailyMin": [4.1, 9.0, 5.9, 7.8, 10.7, 2.0, -2.9, -1.4], "dailyMax": [18.6, 21.5, 23.0, 24.3, 21.0, 9.8, 7.4, 0.3], "dailyRain": [0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0, 0.0], "dailyFrost": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1], "minTemp": -2.9, "frostEnd": 0.1}};
+
+/* ============================================================
+   农丰保 · 气象监测平台（铜川苹果原型）数据层
+   真实数据来自 realdata.js（Open-Meteo / ERA5-Land），
+   乡镇分布、保单、授信与 PD 为模型输出或示意值，页面已分别标注。
+   ============================================================ */
+
+const TC = REAL_DATA;
+const P1 = TC.yijun;    // 主点位：宜君县（海拔较高，冻害重）
+const P2 = TC.yintai;   // 对照点位：印台区（海拔较低，冻害轻）
+
+const TC_META = {
+  city: '铜川市',
+  crop: '富士苹果',
+  window: TC.window,
+  tcrit: TC.tcrit,
+  source: TC.source,
+};
+
+const last = (a) => a[a.length - 1];
+
+/* ---------- 主序列（真实历史数据，逐小时） ---------- */
+const DEMO_SERIES = (function () {
+  const time = P1.time;
+  const hourLabels = time.map((s) => s.slice(5, 10).replace('-', '/') + ' ' + s.slice(11, 13) + '时');
+  const temp = P1.temp;
+  const precip = P1.precip;
+  const humidity = P1.humid;
+  const wind = P1.wind;
+  const frostAcc = P1.frostAcc;
+  const rain24 = +precip.slice(-24).reduce((a, b) => a + b, 0).toFixed(1);
+  const rain7 = +precip.reduce((a, b) => a + b, 0).toFixed(1);
+  const wetDays = P1.dailyRain.filter((v) => v >= 5).length;
+  return {
+    time, hourLabels,
+    dayLabels: P1.dayLabels,
+    temp, precip, humidity, wind,
+    frostAcc, frostDaily: P1.dailyFrost,
+    dailyMin: P1.dailyMin,
+    dailyMax: P1.dailyMax,
+    dailyRain: P1.dailyRain,
+    minTemp: P1.minTemp,
+    T_CRIT: TC.tcrit,
+    rain24, rain7, wetDays,
+    compare: {
+      name: '印台区',
+      dayLabels: P2.dayLabels,
+      dailyMin: P2.dailyMin,
+      dailyFrost: P2.dailyFrost,
+      minTemp: P2.minTemp,
+    },
+  };
+})();
+
+/* ---------- 产区风险分布（宜君、印台两点为真实数据，其余为示意） ---------- */
+const DEMO_TOWNS = [
+  { name: '宜君县尧生镇', level: 'red', pd: 21.4, farms: 168, loan: 920, area: '实测点位（真实）', frost: 13.8 },
+  { name: '宜君县哭泉镇', level: 'red', pd: 19.8, farms: 132, loan: 740, area: '示意', frost: 11.2 },
+  { name: '宜君县彭镇', level: 'yellow', pd: 13.5, farms: 96, loan: 520, area: '示意', frost: 6.4 },
+  { name: '印台区红土镇', level: 'yellow', pd: 11.2, farms: 118, loan: 610, area: '实测点位（真实）', frost: 0.1 },
+  { name: '印台区阿庄镇', level: 'green', pd: 8.6, farms: 74, loan: 360, area: '示意', frost: 0.6 },
+  { name: '印台区广阳镇', level: 'green', pd: 7.9, farms: 58, loan: 280, area: '示意', frost: 0.2 },
+];
+
+/* ---------- 今日预警清单 ---------- */
+const DEMO_ALERTS = [
+  {
+    level: 'red', town: '宜君县尧生镇', indicator: '花蕾期冻害累积量',
+    value: last(P1.frostAcc) + ' ℃·h（红色阈值 10）', time: '03-29 06:00',
+    action: '立即启动防霜（熏烟/喷水），上修 PD，测算赔付预案',
+  },
+  {
+    level: 'yellow', town: '印台区红土镇', indicator: '夜间最低气温',
+    value: DEMO_SERIES.compare.minTemp + ' ℃（临界 ' + DEMO_SERIES.T_CRIT + ' ℃）', time: '03-29 05:00',
+    action: '提示果园防霜，客户经理联系种植户核实受灾情况',
+  },
+  {
+    level: 'yellow', town: '宜君县彭镇', indicator: '未来 10 天盛花期冻害概率',
+    value: '68%（阈值 60%）', time: '03-28 20:00',
+    action: '提前预警，建议评估追加投保与授信敞口',
+  },
+];
+
+/* ---------- 未来 10 天风险预测（预报产品示意，正式版接入智能网格预报） ---------- */
+const DEMO_FORECAST = [
+  { d: '3/30', level: 'red', label: '冻害', v: '74%' },
+  { d: '3/31', level: 'yellow', label: '低温', v: '48%' },
+  { d: '4/01', level: 'yellow', label: '低温', v: '36%' },
+  { d: '4/02', level: 'green', label: '平缓', v: '14%' },
+  { d: '4/03', level: 'green', label: '平缓', v: '11%' },
+  { d: '4/04', level: 'green', label: '平缓', v: '9%' },
+  { d: '4/05', level: 'yellow', label: '阴雨', v: '42%' },
+  { d: '4/06', level: 'yellow', label: '阴雨', v: '55%' },
+  { d: '4/07', level: 'red', label: '冻害', v: '66%' },
+  { d: '4/08', level: 'green', label: '平缓', v: '18%' },
+];
+
+/* ---------- 果园气象站 ---------- */
+const T1 = P1.temp, T2 = P2.temp;
+const DEMO_STATIONS = [
+  {
+    name: '宜君县尧生果园站', temp: last(T1), rain: DEMO_SERIES.rain24,
+    wind: Math.max.apply(null, P1.wind.slice(-24)), humid: last(P1.humid),
+    status: '正常', level: 'red', real: true,
+  },
+  {
+    name: '印台区红土果园站', temp: last(T2),
+    rain: +P2.precip.slice(-24).reduce((a, b) => a + b, 0).toFixed(1),
+    wind: Math.max.apply(null, P2.wind.slice(-24)), humid: last(P2.humid),
+    status: '正常', level: 'yellow', real: true,
+  },
+  { name: '宜君县哭泉果园站', temp: +(last(T1) + 0.8).toFixed(1), rain: 0, wind: 3.6, humid: 71, status: '正常', level: 'red', real: false },
+  { name: '宜君县彭镇果园站', temp: +(last(T1) + 1.9).toFixed(1), rain: 0, wind: 3.2, humid: 68, status: '正常', level: 'yellow', real: false },
+  { name: '印台区阿庄果园站', temp: +(last(T2) + 1.2).toFixed(1), rain: 0, wind: 2.9, humid: 64, status: '延迟 12 分钟', level: 'green', real: false },
+  { name: '印台区广阳果园站', temp: +(last(T2) + 2.1).toFixed(1), rain: 0, wind: 2.6, humid: 62, status: '正常', level: 'green', real: false },
+];
+
+/* ---------- 指标库（富士苹果 · 铜川） ---------- */
+const DEMO_INDICATORS = [
+  {
+    name: '花蕾期冻害累积量', group: '气象风险 · 低温', level: 'red', real: true,
+    value: String(last(P1.frostAcc)), unit: '℃·h', pct: 'P95（历史高分位）',
+    threshold: '黄 >3 ℃·h ｜ 红 >10 ℃·h（需本地标定）', freq: '逐小时',
+    source: 'ERA5-Land 逐小时气温（真实数据）',
+    formula: 'FT = Σ max(0, T_crit − T_hour)，T_crit 按物候阶段取（花蕾期约 −2.8℃，盛花期约 −2.2℃）',
+    basis: '临界温度采用苹果物候阶段冻害文献参考值，必须用当地品种与花期观测标定',
+    action: '触发红色预警 → 果园防霜 → 上修 PD → 启动赔付测算',
+  },
+  {
+    name: '夜间最低气温', group: '气象风险 · 低温', level: 'red', real: true,
+    value: String(DEMO_SERIES.minTemp), unit: '℃', pct: '窗口内最低',
+    threshold: '低于 −2.8℃ 触及花蕾期冻害临界', freq: '逐小时',
+    source: 'ERA5-Land 逐小时气温（真实数据）',
+    formula: '取每日 20:00 至次日 08:00 的最低气温',
+    basis: '冻害发生在夜间辐射降温时段，需按果园实际地形与海拔订正',
+    action: '低于临界温度即启动防霜提示，并进入赔付测算',
+  },
+  {
+    name: '未来 10 天盛花期冻害概率', group: '预报 · 提前预警', level: 'red', real: false,
+    value: '68', unit: '%', pct: '未来 10 天最高值',
+    threshold: '概率 >60% 触发提前预警', freq: '每日更新',
+    source: '智能网格预报产品（正式版接入；当前为示意）',
+    formula: '基于预报最低温度与花期临界温度的超越概率，结合集合预报离散度',
+    basis: '提前预警的提前量取决于预报时效与防霜准备所需时间',
+    action: '提前 10 天预警 → 农户备防霜物资 → 银行评估敞口',
+  },
+  {
+    name: '需冷量累积', group: '气象风险 · 低温', level: 'green', real: false,
+    value: '1086', unit: 'h', pct: '满足品种需求',
+    threshold: '低于需冷量下限则花期推迟、坐果率下降', freq: '逐日',
+    source: '逐小时气温（可由 ERA5/自动站计算）',
+    formula: '休眠期内逐小时温度 ≤7.2℃ 的累计小时数',
+    basis: '品种需冷量取自苹果栽培文献，按当地主栽品种取值',
+    action: '修正花期预测，决定冻害预警窗口的起止时间',
+  },
+  {
+    name: '有效积温 GDD', group: '气象风险 · 气温', level: 'green', real: false,
+    value: '286', unit: '℃·d', pct: '较常年 +4%',
+    threshold: '偏离常年 ±15% 提示花期提前或推迟', freq: '逐日',
+    source: '逐小时气温',
+    formula: 'GDD = Σ max(0, (T_max + T_min)/2 − T_base)，苹果常用基点 5℃',
+    basis: '基点温度按苹果常用值，需按品种校准',
+    action: '预测花期日期，提前锁定冻害高风险时段',
+  },
+  {
+    name: '膨大期高温日数', group: '气象风险 · 高温', level: 'green', real: false,
+    value: '0', unit: '天', pct: 'P10',
+    threshold: '日最高气温 >35℃ 计 1 天', freq: '逐日',
+    source: '逐小时气温',
+    formula: '统计日最高气温超过阈值的天数',
+    basis: '苹果日灼与果实品质下降的高温阈值，参考果树生理文献',
+    action: '提示灌溉与遮阴，评估品质与产量影响',
+  },
+  {
+    name: '成熟期连阴雨日数', group: '气象风险 · 降水', level: 'green', real: false,
+    value: '0', unit: '天', pct: '非成熟期',
+    threshold: '黄 ≥3 天 ｜ 红 ≥5 天（9-10 月）', freq: '逐日',
+    source: 'ERA5 / 自动站降水',
+    formula: '日降水 >5mm 的连续天数',
+    basis: '成熟期连阴雨影响着色、采收与耐储性，阈值按品种与采收期设定',
+    action: '提示抢收与果园排水，评估品质损失',
+  },
+  {
+    name: '干旱指数 SPI（30 天）', group: '气象风险 · 降水', level: 'green', real: false,
+    value: '-0.3', unit: '', pct: 'P38',
+    threshold: 'SPI < −1 干旱 ｜ SPI < −1.5 严重', freq: '逐日 / 逐周',
+    source: 'ERA5 / GPM IMERG 降水',
+    formula: '对降水序列拟合 Gamma 分布后标准化',
+    basis: 'SPI 为标准方法，时间尺度可按作物需求选择',
+    action: '提示灌溉调度，持续干旱时上调 PD',
+  },
+  {
+    name: '降水量（近 7 天）', group: '气象风险 · 降水', level: 'green', real: true,
+    value: String(DEMO_SERIES.rain7), unit: 'mm', pct: '偏少',
+    threshold: '花蕾期降水偏多会影响授粉与病害发生', freq: '逐小时累计',
+    source: 'ERA5-Land 逐小时降水（真实数据）',
+    formula: '逐小时降水量累计',
+    basis: '花期阴雨影响授粉坐果，需结合湿度与日照综合判断',
+    action: '提示授粉窗口，必要时调整保单生效时点',
+  },
+  {
+    name: '大风与冰雹事件', group: '气象风险 · 风雹', level: 'green', real: false,
+    value: '0', unit: '次', pct: 'P15',
+    threshold: '风力 ≥7 级或雷达识别冰雹', freq: '逐小时',
+    source: '自动站风观测 + 天气雷达（正式版接入）',
+    formula: '事件记 0/1 并标注强度等级',
+    basis: '按气象灾害分级标准',
+    action: '触发灾情核查与快速理赔通道',
+  },
+  {
+    name: 'NDVI 长势距平', group: '遥感校验', level: 'green', real: false,
+    value: '待接入', unit: '', pct: '—',
+    threshold: '距平低于 −15% 提示长势异常', freq: '约 5 天（卫星重访）',
+    source: 'Sentinel-2 MSI（需云掩膜）',
+    formula: '当年同期 NDVI 与近 5 年同期均值之差，除以均值',
+    basis: '需云掩膜与混合像元处理，地块边界内取均值',
+    action: '校验低温影响是否已在作物上体现，修正产量分布',
+  },
+];
+
+/* ---------- 物候期（渭北旱塬苹果） ---------- */
+const DEMO_PHENO = [
+  { name: '休眠期', range: '12 月 - 2 月', now: false },
+  { name: '萌芽期', range: '3 月上 - 3 月中', now: false },
+  { name: '花序分离期', range: '3 月下 - 4 月初', now: true },
+  { name: '初花 - 盛花期', range: '4 月上 - 4 月中', now: false },
+  { name: '幼果期', range: '4 月下 - 6 月', now: false },
+  { name: '成熟采收期', range: '9 月 - 10 月中', now: false },
+];
+
+/* ---------- 顶部 KPI ---------- */
+const DEMO_KPI = {
+  tempNow: last(P1.temp),
+  delta24: +(last(P1.temp) - P1.temp[P1.temp.length - 25]).toFixed(1),
+  rain24: DEMO_SERIES.rain24,
+  rain7: DEMO_SERIES.rain7,
+  frostAcc: last(P1.frostAcc),
+  frostThreshold: 10,
+  humidity: last(P1.humid),
+  humidityMin: Math.min.apply(null, P1.humid),
+  humidityMax: Math.max.apply(null, P1.humid),
+  pdNow: 21.4,
+  pdBase: 8.1,
+  leadDays: 10,
+  level: 'red',
+  compareName: '印台区',
+  compareFrost: P2.frostAcc[P2.frostAcc.length - 1],
+  compareMin: P2.minTemp,
+};
+
+/* 铜川苹果逐年花期冻害统计（生成文件，勿手改） */
+const BACKTEST = {"tcrit": -2.8, "window": "每年 03-25 - 04-25（苹果花蕾期至幼果期）", "source": "Open-Meteo 历史接口（ERA5-Land，约 9km 格点）", "years": [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025], "yijun": [{"year": 2015, "min": -1.3, "minAt": "2015-04-13T06:00", "hoursBelow0": 10, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2015-04-13", "worstDayMin": -1.3}, {"year": 2016, "min": -2.5, "minAt": "2016-03-27T02:00", "hoursBelow0": 19, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2016-03-27", "worstDayMin": -2.5}, {"year": 2017, "min": -2.9, "minAt": "2017-03-26T07:00", "hoursBelow0": 17, "hoursBelowCrit": 1, "frostAcc": 0.1, "worstDay": "2017-03-26", "worstDayMin": -2.9}, {"year": 2018, "min": -1.6, "minAt": "2018-04-06T07:00", "hoursBelow0": 13, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2018-04-06", "worstDayMin": -1.6}, {"year": 2019, "min": -2.0, "minAt": "2019-03-31T06:00", "hoursBelow0": 4, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2019-03-31", "worstDayMin": -2.0}, {"year": 2020, "min": 0.3, "minAt": "2020-03-29T07:00", "hoursBelow0": 0, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2020-03-29", "worstDayMin": 0.3}, {"year": 2021, "min": -1.3, "minAt": "2021-04-14T06:00", "hoursBelow0": 2, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2021-04-14", "worstDayMin": -1.3}, {"year": 2022, "min": -0.4, "minAt": "2022-03-27T07:00", "hoursBelow0": 4, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2022-03-27", "worstDayMin": -0.4}, {"year": 2023, "min": -1.1, "minAt": "2023-04-07T06:00", "hoursBelow0": 37, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2023-04-07", "worstDayMin": -1.1}, {"year": 2024, "min": 2.1, "minAt": "2024-03-25T07:00", "hoursBelow0": 0, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2024-03-25", "worstDayMin": 2.1}, {"year": 2025, "min": -4.7, "minAt": "2025-03-28T06:00", "hoursBelow0": 47, "hoursBelowCrit": 15, "frostAcc": 15.2, "worstDay": "2025-03-28", "worstDayMin": -4.7}], "yintai": [{"year": 2015, "min": 1.2, "minAt": "2015-04-13T07:00", "hoursBelow0": 0, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2015-04-13", "worstDayMin": 1.2}, {"year": 2016, "min": 0.4, "minAt": "2016-03-27T03:00", "hoursBelow0": 0, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2016-03-27", "worstDayMin": 0.4}, {"year": 2017, "min": -1.3, "minAt": "2017-03-26T07:00", "hoursBelow0": 5, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2017-03-26", "worstDayMin": -1.3}, {"year": 2018, "min": -1.0, "minAt": "2018-04-07T06:00", "hoursBelow0": 6, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2018-04-07", "worstDayMin": -1.0}, {"year": 2019, "min": 1.3, "minAt": "2019-03-25T05:00", "hoursBelow0": 0, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2019-03-25", "worstDayMin": 1.3}, {"year": 2020, "min": 1.4, "minAt": "2020-03-28T04:00", "hoursBelow0": 0, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2020-03-28", "worstDayMin": 1.4}, {"year": 2021, "min": 1.5, "minAt": "2021-03-21T01:00", "hoursBelow0": 0, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2021-04-14", "worstDayMin": 1.5}, {"year": 2022, "min": 2.6, "minAt": "2022-03-22T07:00", "hoursBelow0": 0, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2022-04-16", "worstDayMin": 2.6}, {"year": 2023, "min": 1.4, "minAt": "2023-04-06T07:00", "hoursBelow0": 0, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2023-04-06", "worstDayMin": 1.4}, {"year": 2024, "min": 4.7, "minAt": "2024-03-20T06:00", "hoursBelow0": 0, "hoursBelowCrit": 0, "frostAcc": 0, "worstDay": "2024-03-28", "worstDayMin": 4.7}, {"year": 2025, "min": -2.9, "minAt": "2025-03-28T06:00", "hoursBelow0": 21, "hoursBelowCrit": 1, "frostAcc": 0.1, "worstDay": "2025-03-28", "worstDayMin": -2.9}]};
+
+/* 预报接口实测样例（生成文件，勿手改） */
+const FORECAST_SAMPLE = {"fetchedAt": "2026-09-14", "site": "铜川市印台区（近似中心点）", "source": "Open-Meteo 预报接口（含 past_days=7, forecast_days=10）", "timezone": "Asia/Shanghai", "elevation": 879.0, "daily": {"time": ["2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-12", "2026-09-13", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-19", "2026-09-20", "2026-09-21", "2026-09-22", "2026-09-23"], "tmin": [19.4, 15.9, 12.1, 11.1, 11.7, 10.6, 14.2, 13.6, 15.6, 13.8, 12.5, 15.0, 16.3, 18.0, 17.5, 17.5, 12.8], "tmax": [25.5, 20.6, 15.1, 19.8, 17.1, 20.4, 24.5, 24.4, 24.2, 20.7, 22.1, 21.8, 20.4, 20.3, 25.5, 23.5, 18.1], "rain": [1.6, 19.8, 22.0, 1.3, 0.0, 0.0, 1.5, 0.0, 0.0, 1.2, 0.0, 0.0, 4.5, 12.9, 0.0, 0.0, 6.6]}, "hourlyHead": {"time": ["2026-09-07T00:00", "2026-09-07T01:00", "2026-09-07T02:00", "2026-09-07T03:00", "2026-09-07T04:00", "2026-09-07T05:00", "2026-09-07T06:00", "2026-09-07T07:00", "2026-09-07T08:00", "2026-09-07T09:00", "2026-09-07T10:00", "2026-09-07T11:00", "2026-09-07T12:00", "2026-09-07T13:00", "2026-09-07T14:00", "2026-09-07T15:00", "2026-09-07T16:00", "2026-09-07T17:00", "2026-09-07T18:00", "2026-09-07T19:00", "2026-09-07T20:00", "2026-09-07T21:00", "2026-09-07T22:00", "2026-09-07T23:00", "2026-09-08T00:00", "2026-09-08T01:00", "2026-09-08T02:00", "2026-09-08T03:00", "2026-09-08T04:00", "2026-09-08T05:00", "2026-09-08T06:00", "2026-09-08T07:00", "2026-09-08T08:00", "2026-09-08T09:00", "2026-09-08T10:00", "2026-09-08T11:00", "2026-09-08T12:00", "2026-09-08T13:00", "2026-09-08T14:00", "2026-09-08T15:00", "2026-09-08T16:00", "2026-09-08T17:00", "2026-09-08T18:00", "2026-09-08T19:00", "2026-09-08T20:00", "2026-09-08T21:00", "2026-09-08T22:00", "2026-09-08T23:00"], "temp": [19.9, 19.5, 19.4, 19.4, 19.4, 19.8, 19.7, 19.7, 20.6, 22.0, 22.8, 22.8, 23.3, 24.1, 23.8, 25.5, 25.3, 24.6, 24.1, 23.1, 22.7, 21.5, 21.2, 20.8, 20.6, 20.6, 20.3, 20.4, 20.5, 19.9, 18.6, 18.1, 18.3, 18.3, 18.3, 18.3, 18.4, 18.4, 17.4, 17.2, 16.8, 16.5, 16.4, 16.4, 16.4, 16.2, 16.3, 15.9], "rain": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.3, 0.3, 0.3, 0.1, 0.0, 0.1, 0.1, 0.1, 0.1, 0.3, 0.7, 1.9, 1.9, 1.0, 1.0, 0.7, 0.6, 1.4, 2.0, 2.3, 1.3, 1.0, 0.9, 0.7, 0.6, 0.7]}, "fields": [{"name": "temperature_2m", "label": "气温（逐小时）", "unit": "℃"}, {"name": "precipitation", "label": "降水（逐小时）", "unit": "mm"}, {"name": "relative_humidity_2m", "label": "相对湿度（逐小时）", "unit": "%"}, {"name": "wind_speed_10m", "label": "风速（逐小时）", "unit": "m/s（需换算）"}, {"name": "temperature_2m_min / max", "label": "逐日最低/最高气温", "unit": "℃"}, {"name": "precipitation_sum", "label": "逐日降水合计", "unit": "mm"}]};
+
+/* ============================================================
+   轻量 SVG 图表与界面组件（无外部依赖，断网可用）
+   ============================================================ */
+
+const SVGNS = 'http://www.w3.org/2000/svg';
+const RISK_COLOR = { green: '#16a34a', yellow: '#f59e0b', red: '#dc2626' };
+
+function svgEl(tag, attrs, parent) {
+  const node = document.createElementNS(SVGNS, tag);
+  if (attrs) for (const k in attrs) node.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(node);
+  return node;
+}
+
+function legendHTML(items) {
+  return `<div class="legend">${items
+    .map((it) => `<span><i class="dot" style="background:${it.color}"></i>${it.name}</span>`)
+    .join('')}</div>`;
+}
+
+/* ---------- 折线图（支持阈值线、面积、标记） ---------- */
+function lineChart(sel, opts) {
+  const host = typeof sel === 'string' ? document.querySelector(sel) : sel;
+  if (!host) return;
+  const series = opts.series || [];
+  const thrs = opts.thresholds || [];
+  const labels = opts.labels || [];
+  let html = '';
+  if (opts.legend !== false) {
+    html += legendHTML(
+      series.map((s) => ({ name: s.name, color: s.color })).concat(thrs.map((t) => ({ name: t.label, color: t.color })))
+    );
+  }
+  html += '<div class="chart"></div>';
+  host.innerHTML = html;
+  const box = host.querySelector('.chart');
+
+  const W = 820;
+  const H = opts.height || 230;
+  const P = { l: 46, r: 14, t: 14, b: 28 };
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': opts.title || '趋势图' }, box);
+
+  /* 纵轴范围只由数据决定；阈值线若超出范围则不绘制（避免把曲线压扁） */
+  const all = [];
+  series.forEach((s) => s.values.forEach((v) => { if (typeof v === 'number' && isFinite(v)) all.push(v); }));
+  let min = opts.yMin !== undefined ? opts.yMin : Math.min.apply(null, all);
+  let max = opts.yMax !== undefined ? opts.yMax : Math.max.apply(null, all);
+  const pad = (max - min) * 0.14 || 1;
+  if (opts.yMin === undefined) min -= pad;
+  if (opts.yMax === undefined) max += pad;
+
+  const count = Math.max.apply(null, series.map((s) => s.values.length).concat([2]));
+  const X = (i) => P.l + ((W - P.l - P.r) * (count <= 1 ? 0 : i / (count - 1)));
+  const XL = (j) => P.l + ((W - P.l - P.r) * (labels.length <= 1 ? 0 : j / (labels.length - 1)));
+  const Y = (v) => P.t + (H - P.t - P.b) * (1 - (v - min) / (max - min || 1));
+
+  const ticks = 4;
+  for (let k = 0; k <= ticks; k++) {
+    const v = min + ((max - min) * k) / ticks;
+    const y = Y(v);
+    svgEl('line', { x1: P.l, x2: W - P.r, y1: y, y2: y, class: 'gridline' }, svg);
+    const t = svgEl('text', { x: P.l - 8, y: y + 4, class: 'ax', 'text-anchor': 'end' }, svg);
+    t.textContent = Math.abs(v) >= 100 ? Math.round(v) : Math.round(v * 10) / 10;
+  }
+
+  const filled = labels.map((lb, j) => (lb ? j : -1)).filter((j) => j >= 0);
+  const stepN = Math.max(1, Math.ceil(filled.length / 8));
+  filled.forEach((j, k) => {
+    if (k % stepN === 0 || k === filled.length - 1) {
+      const t = svgEl('text', { x: XL(j), y: H - 8, class: 'ax', 'text-anchor': 'middle' }, svg);
+      t.textContent = labels[j];
+    }
+  });
+
+  thrs.forEach((th) => {
+    if (th.value < min || th.value > max) return;
+    const y = Y(th.value);
+    svgEl('line', { x1: P.l, x2: W - P.r, y1: y, y2: y, class: 'thr', stroke: th.color }, svg);
+    const t = svgEl('text', { x: W - P.r - 2, y: y - 6, class: 'thr-label', 'text-anchor': 'end', fill: th.color }, svg);
+    t.textContent = th.label;
+  });
+
+  series.forEach((s) => {
+    if (s.area) {
+      const d =
+        s.values.map((v, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join('') +
+        `L${X(s.values.length - 1).toFixed(1)},${Y(min).toFixed(1)}L${X(0).toFixed(1)},${Y(min).toFixed(1)}Z`;
+      svgEl('path', { d, fill: s.color, opacity: 0.13, stroke: 'none' }, svg);
+    }
+    const d = s.values.map((v, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join('');
+    svgEl('path', {
+      d, fill: 'none', stroke: s.color, 'stroke-width': s.width || 2.2,
+      'stroke-linejoin': 'round', 'stroke-linecap': 'round', 'stroke-dasharray': s.dash || '',
+    }, svg);
+    if (s.markEvery) {
+      s.values.forEach((v, i) => {
+        if (i % s.markEvery === 0) {
+          const c = svgEl('circle', { cx: X(i), cy: Y(v), r: 2.2, fill: s.color }, svg);
+          const t = svgEl('title', {}, c);
+          t.textContent = `${labels[i] || ''} ${v}${opts.unit || ''}`;
+        }
+      });
+    }
+  });
+}
+
+/* ---------- 柱状图（日降水等） ---------- */
+function barChart(sel, opts) {
+  const host = typeof sel === 'string' ? document.querySelector(sel) : sel;
+  if (!host) return;
+  let html = '';
+  if (opts.legend !== false) html += legendHTML([{ name: opts.name || '数值', color: opts.color || '#0f6fbf' }]);
+  html += '<div class="chart"></div>';
+  host.innerHTML = html;
+  const box = host.querySelector('.chart');
+
+  const W = 820;
+  const H = opts.height || 210;
+  const P = { l: 46, r: 14, t: 14, b: 28 };
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': opts.title || '柱状图' }, box);
+  const values = opts.values || [];
+  const thr = opts.threshold;
+  const max = Math.max.apply(null, values.concat(thr ? [thr.value] : [])) * 1.2 || 1;
+  const min = 0;
+  const bw = (W - P.l - P.r) / values.length;
+  const Y = (v) => P.t + (H - P.t - P.b) * (1 - (v - min) / (max - min || 1));
+
+  for (let k = 0; k <= 4; k++) {
+    const v = min + ((max - min) * k) / 4;
+    const y = Y(v);
+    svgEl('line', { x1: P.l, x2: W - P.r, y1: y, y2: y, class: 'gridline' }, svg);
+    const t = svgEl('text', { x: P.l - 8, y: y + 4, class: 'ax', 'text-anchor': 'end' }, svg);
+    t.textContent = Math.round(v * 10) / 10;
+  }
+  values.forEach((v, i) => {
+    const x = P.l + i * bw + bw * 0.22;
+    const y = Y(v);
+    const bar = svgEl('rect', {
+      x, y, width: bw * 0.56, height: Math.max(1, H - P.b - y),
+      rx: 3, fill: opts.colors ? opts.colors[i] : opts.color || '#0f6fbf', class: 'bar',
+    }, svg);
+    const t = svgEl('title', {}, bar);
+    t.textContent = `${(opts.labels || [])[i] || ''} ${v}${opts.unit || ''}`;
+    const lb = svgEl('text', { x: x + bw * 0.28, y: H - 8, class: 'ax', 'text-anchor': 'middle' }, svg);
+    lb.textContent = (opts.labels || [])[i] || '';
+  });
+  if (thr) {
+    const y = Y(thr.value);
+    svgEl('line', { x1: P.l, x2: W - P.r, y1: y, y2: y, class: 'thr', stroke: thr.color }, svg);
+    const t = svgEl('text', { x: W - P.r - 2, y: y - 6, class: 'thr-label', 'text-anchor': 'end', fill: thr.color }, svg);
+    t.textContent = thr.label;
+  }
+}
+
+/* ---------- 未来 10 天风险条 ---------- */
+
+/* ---------- 分组柱状图（多年对比） ---------- */
+function groupedBarChart(sel, opts) {
+  const host = typeof sel === 'string' ? document.querySelector(sel) : sel;
+  if (!host) return;
+  const series = opts.series || [];
+  let html = legendHTML(series.map((s) => ({ name: s.name, color: s.color })));
+  html += '<div class="chart"></div>';
+  host.innerHTML = html;
+  const box = host.querySelector('.chart');
+
+  const W = 820;
+  const H = opts.height || 280;
+  const P = { l: 48, r: 14, t: 14, b: 34 };
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': opts.title || '柱状图' }, box);
+  const labels = opts.labels || [];
+  let max = 1;
+  series.forEach((s) => s.values.forEach((v) => { if (v > max) max = v; }));
+  max = max * 1.18;
+  const groupW = (W - P.l - P.r) / labels.length;
+  const barW = Math.min(22, (groupW * 0.7) / Math.max(1, series.length));
+  const Y = (v) => P.t + (H - P.t - P.b) * (1 - v / max);
+
+  for (let k = 0; k <= 4; k++) {
+    const v = (max * k) / 4;
+    const y = Y(v);
+    svgEl('line', { x1: P.l, x2: W - P.r, y1: y, y2: y, class: 'gridline' }, svg);
+    const t = svgEl('text', { x: P.l - 8, y: y + 4, class: 'ax', 'text-anchor': 'end' }, svg);
+    t.textContent = Math.round(v * 10) / 10;
+  }
+  labels.forEach((lb, i) => {
+    const gx = P.l + i * groupW + groupW / 2;
+    series.forEach((s, k) => {
+      const v = s.values[i] || 0;
+      const x = gx - (series.length * barW) / 2 + k * barW + barW * 0.1;
+      const y = Y(v);
+      const rect = svgEl('rect', {
+        x, y, width: barW * 0.8, height: Math.max(v > 0 ? 1.5 : 0, H - P.b - y),
+        rx: 2.5, fill: s.color, class: 'bar',
+      }, svg);
+      const tip = svgEl('title', {}, rect);
+      tip.textContent = `${lb} ${s.name} ${v}${opts.unit || ''}`;
+    });
+    const t = svgEl('text', { x: gx, y: H - 10, class: 'ax', 'text-anchor': 'middle' }, svg);
+    t.textContent = lb;
+  });
+  if (opts.threshold) {
+    const y = Y(opts.threshold.value);
+    svgEl('line', { x1: P.l, x2: W - P.r, y1: y, y2: y, class: 'thr', stroke: opts.threshold.color }, svg);
+    const t = svgEl('text', { x: W - P.r - 2, y: y - 6, class: 'thr-label', 'text-anchor': 'end', fill: opts.threshold.color }, svg);
+    t.textContent = opts.threshold.label;
+  }
+}
+
+function renderForecast(sel, days) {
+  const host = typeof sel === 'string' ? document.querySelector(sel) : sel;
+  if (!host) return;
+  host.innerHTML = days
+    .map(
+      (d) => `<div class="fc-day fc-${d.level}">
+        <div class="d">${d.d}</div>
+        <div class="v">${d.v}</div>
+        <div class="note" style="font-size:11.5px">${d.label}</div>
+        <div class="fc-bar"></div>
+      </div>`
+    )
+    .join('');
+}
+
+/* ---------- 预警清单 ---------- */
+function renderAlerts(sel, items) {
+  const host = typeof sel === 'string' ? document.querySelector(sel) : sel;
+  if (!host) return;
+  host.innerHTML = items
+    .map(
+      (a) => `<div class="row">
+        <div class="row-main">
+          <div class="row-title">
+            <span class="lv lv-${a.level}">${a.level === 'red' ? '红色预警' : a.level === 'yellow' ? '黄色预警' : '正常'}</span>
+            <span>${a.town}</span>
+          </div>
+          <div class="row-desc">${a.indicator}：<b>${a.value}</b></div>
+          <div class="row-desc">建议动作：${a.action}</div>
+        </div>
+        <div class="row-time">${a.time}</div>
+      </div>`
+    )
+    .join('');
+}
+
+/* ---------- 乡镇风险着色 ---------- */
+function paintTowns() {
+  document.querySelectorAll('[data-town]').forEach((node) => {
+    const t = DEMO_TOWNS.find((x) => x.name === node.getAttribute('data-town'));
+    if (!t) return;
+    const color = RISK_COLOR[t.level];
+    const poly = node.querySelector('polygon');
+    if (poly) {
+      poly.setAttribute('fill', color);
+      poly.setAttribute('fill-opacity', t.level === 'green' ? '0.30' : t.level === 'yellow' ? '0.42' : '0.52');
+      poly.setAttribute('stroke', color);
+      poly.setAttribute('stroke-width', '1.6');
+    }
+    const val = node.querySelector('.town-val');
+    if (val) val.textContent = `PD ${t.pd}%`;
+    const tip = node.querySelector('title');
+    if (tip) tip.textContent = `${t.name}｜风险 ${t.level}｜PD ${t.pd}%｜在保农户 ${t.farms} 户｜授信 ${t.loan} 万`;
+    node.addEventListener('click', () => {
+      const box = document.getElementById('town-detail');
+      if (!box) return;
+      box.innerHTML = `<div class="card-title">${t.name}</div>
+        <div class="stack" style="margin-top:8px">
+          <div class="row"><div class="row-main"><div class="row-title">当前风险等级</div><div class="row-desc"><span class="lv lv-${t.level}">${t.level === 'red' ? '红色预警' : t.level === 'yellow' ? '黄色预警' : '绿色正常'}</span></div></div></div>
+          <div class="row"><div class="row-main"><div class="row-title">违约概率 PD（当前）</div><div class="row-desc"><b>${t.pd}%</b>（承保时 8.1%）</div></div></div>
+          <div class="row"><div class="row-main"><div class="row-title">在保农户 / 授信余额</div><div class="row-desc">${t.farms} 户 / ${t.loan} 万元</div></div></div>
+          <div class="row"><div class="row-main"><div class="row-title">区域定位</div><div class="row-desc">${t.area}</div></div></div>
+        </div>`;
+    });
+  });
+}
+
+/* ---------- 角色切换 ---------- */
+function initRoleSwitch() {
+  const btns = document.querySelectorAll('[data-role-btn]');
+  const hints = {
+    farmer: '农户视角：你会看到自己地块的天气提醒、保障状态和理赔进度，按钮更大、文字更少。',
+    officer: '客户经理视角：重点看预警工单、风险变化和授信建议，关注该联系哪一户。',
+    insurer: '保险公司视角：重点看指标触发、赔付测算与再保分层，关注该不该赔、赔多少。',
+    regulator: '监管视角：重点看全区风险分布、预警统计与保费补贴、风险补偿池使用情况。',
+  };
+  function apply(role) {
+    btns.forEach((b) => b.setAttribute('aria-pressed', String(b.getAttribute('data-role-btn') === role)));
+    const box = document.getElementById('role-hint');
+    if (box) box.innerHTML = `<b>当前视角</b>　${hints[role] || ''}`;
+    document.querySelectorAll('[data-roles]').forEach((node) => {
+      const allowed = node.getAttribute('data-roles').split(',');
+      node.classList.toggle('hidden', allowed.indexOf(role) === -1);
+    });
+  }
+  btns.forEach((b) => b.addEventListener('click', () => apply(b.getAttribute('data-role-btn'))));
+  apply('officer');
+}
+
+/* ---------- 导航高亮 ---------- */
+function initNav() {
+  const page = document.body.getAttribute('data-page');
+  document.querySelectorAll('.nav-link').forEach((a) => {
+    if (a.getAttribute('data-nav') === page) a.classList.add('active');
+  });
+}
+
+/* 单文件版由外壳统一调度初始化 */
+
+</script>
+<script>
+var PAGE_INIT = {};
+PAGE_INIT['overview'] = function () {
+function initPage() {
+  const k = DEMO_KPI;
+  const S = DEMO_SERIES;
+  document.getElementById('overview-kpi-temp').innerHTML = k.tempNow + '<small>℃</small>';
+  document.getElementById('overview-kpi-trend').textContent = '窗口最低 ' + S.minTemp + '℃ ｜ 较 24 小时前 ' + k.delta24 + '℃';
+  document.getElementById('overview-kpi-rain').innerHTML = k.rain24.toFixed(1) + '<small>mm</small>';
+  document.getElementById('overview-kpi-rain-foot').innerHTML = '近 7 日累计 ' + k.rain7.toFixed(1) + ' mm';
+  document.getElementById('overview-kpi-frost').innerHTML = k.frostAcc + '<small>℃·h</small>';
+  document.getElementById('overview-kpi-frost-lv').textContent = '已超红色阈值 ' + k.frostThreshold;
+  document.getElementById('overview-kpi-humid').innerHTML = k.humidity + '<small>%</small>';
+  document.getElementById('overview-kpi-humid-foot').textContent = '近 7 日 ' + k.humidityMin + '% ~ ' + k.humidityMax + '%';
+  document.getElementById('overview-kpi-pd').innerHTML = k.pdNow + '<small>%</small>';
+  document.getElementById('overview-kpi-pd-foot').textContent = '承保时 PD₀ = ' + k.pdBase + '%，上修 ' + (k.pdNow / k.pdBase).toFixed(1) + ' 倍';
+  document.getElementById('overview-kpi-compare').textContent =
+    '宜君 ' + k.frostAcc + ' vs 印台 ' + k.compareFrost + ' ℃·h';
+
+  paintTowns();
+  renderAlerts('#overview-alerts', DEMO_ALERTS);
+  renderForecast('#overview-forecast', DEMO_FORECAST);
+
+  document.getElementById('overview-min-yijun').textContent = S.minTemp + '℃';
+  document.getElementById('overview-min-yintai').textContent = S.compare.minTemp + '℃';
+
+  lineChart('#overview-chart-frost', {
+    title: '花蕾期冻害累积量', height: 240, labels: S.dayLabels, unit: '℃·h', yMin: 0,
+    series: [{ name: '冻害累积量', color: '#dc2626', values: S.frostDaily, area: true, markEvery: 1 }],
+    thresholds: [
+      { value: 10, color: '#dc2626', label: '红色阈值 10' },
+      { value: 3, color: '#f59e0b', label: '黄色阈值 3' },
+    ],
+  });
+
+  lineChart('#overview-chart-compare', {
+    title: '逐日最低气温', height: 240, labels: S.dayLabels, unit: '℃',
+    series: [
+      { name: '宜君县', color: '#dc2626', values: S.dailyMin, markEvery: 1 },
+      { name: '印台区', color: '#0f6fbf', values: S.compare.dailyMin, markEvery: 1 },
+    ],
+    thresholds: [{ value: S.T_CRIT, color: '#7c5cd6', label: '花蕾期冻害临界 ' + S.T_CRIT + '℃' }],
+  });
+}
+  if (typeof initPage === 'function') initPage();
+};
+PAGE_INIT['realtime'] = function () {
+function mkLabels(times) {
+  return times.map((d) => {
+    const iso = typeof d === 'string' ? d : null;
+    const hh = iso ? iso.slice(11, 13) : String(d.getHours()).padStart(2, '0');
+    const mm = iso ? Number(iso.slice(5, 7)) : d.getMonth() + 1;
+    const dd = iso ? Number(iso.slice(8, 10)) : d.getDate();
+    if (times.length <= 30) return hh + ':00';
+    if (hh === '00') return mm + '/' + dd;
+    return '';
+  });
+}
+let RT_RANGE = 168;
+
+function renderRealtime() {
+  const n = RT_RANGE;
+  const s = DEMO_SERIES;
+  const sl = (arr) => arr.slice(arr.length - n);
+  const times = sl(s.time);
+  const labels = mkLabels(times);
+  const temp = sl(s.temp);
+  const rain = sl(s.precip);
+  const humid = sl(s.humidity);
+  const wind = sl(s.wind);
+
+  document.getElementById('realtime-rt-temp').innerHTML = temp[temp.length - 1] + '<small>℃</small>';
+  const rain24 = rain.slice(-24).reduce((a, b) => a + b, 0);
+  document.getElementById('realtime-rt-rain').innerHTML = rain24.toFixed(1) + '<small>mm</small>';
+  document.getElementById('realtime-rt-rainsum').textContent = rain.reduce((a, b) => a + b, 0).toFixed(1) + ' mm';
+  document.getElementById('realtime-rt-humid').textContent = humid[humid.length - 1] + '%';
+  document.getElementById('realtime-rt-windmax').textContent = Math.max.apply(null, wind).toFixed(1) + ' m/s';
+  document.getElementById('realtime-rt-wind').innerHTML = wind[wind.length - 1] + '<small>m/s</small>';
+  document.getElementById('realtime-rt-wind-note').textContent =
+    '窗口峰值 ' + Math.max.apply(null, DEMO_SERIES.wind).toFixed(1) + ' m/s（寒潮过境时上升）';
+
+  const below = temp.filter((v) => v < 0).length;
+  const belowCrit = temp.filter((v) => v < DEMO_SERIES.T_CRIT).length;
+  document.getElementById('realtime-chart-temp-note').textContent =
+    '低于 0℃ ' + below + ' 小时 ｜ 低于临界 ' + belowCrit + ' 小时';
+  document.getElementById('realtime-rain-days-note').textContent =
+    '近 7 日降水 ' + DEMO_SERIES.rain7.toFixed(1) + ' mm，无连阴雨';
+  const len = DEMO_SERIES.temp.length;
+  const drop = (DEMO_SERIES.temp[len - 1] - DEMO_SERIES.temp[len - 49]).toFixed(1);
+  document.getElementById('realtime-event-cold').textContent =
+    '气温持续下降，宜君县最低 ' + DEMO_SERIES.minTemp + '℃，花蕾期冻害累积量开始上升';
+  document.getElementById('realtime-event-trigger').textContent =
+    '红色阈值 10℃·h 被突破（当前 ' + DEMO_SERIES.frostAcc[len - 1] + '℃·h），PD 由 ' + DEMO_KPI.pdBase + '% 上修至 ' + DEMO_KPI.pdNow + '%';
+
+  lineChart('#realtime-chart-temp', {
+    title: '气温', height: 230, labels, unit: '℃',
+    series: [{ name: '气温', color: '#dc2626', values: temp, area: true }],
+    thresholds: [
+      { value: DEMO_SERIES.T_CRIT, color: '#7c5cd6', label: '花蕾期冻害临界 ' + DEMO_SERIES.T_CRIT + '℃' },
+      { value: 0, color: '#0f6fbf', label: '0℃' },
+    ],
+  });
+  lineChart('#realtime-chart-rain', {
+    title: '降水', height: 230, labels, unit: 'mm/h',
+    series: [{ name: '小时降水', color: '#0f6fbf', values: rain, area: true }],
+    legend: true,
+  });
+  lineChart('#realtime-chart-humid', {
+    title: '湿度', height: 230, labels, unit: '%', yMin: 0, yMax: 100,
+    series: [{ name: '相对湿度', color: '#147a55', values: humid }],
+    thresholds: [{ value: 85, color: '#f59e0b', label: '高湿提示 85%' }],
+  });
+  lineChart('#realtime-chart-wind', {
+    title: '风速', height: 230, labels, unit: 'm/s',
+    series: [{ name: '风速', color: '#7c5cd6', values: wind }],
+  });
+}
+
+function renderStations() {
+  document.getElementById('realtime-station-body').innerHTML = DEMO_STATIONS.map(
+    (s) => `<tr>
+      <td>${s.name}</td>
+      <td class="num">${s.temp} ℃</td>
+      <td class="num">${s.rain} mm</td>
+      <td class="num">${s.wind} m/s</td>
+      <td class="num">${s.humid}%</td>
+      <td><span class="chip ${s.real ? '' : 'chip-gold'}" style="font-size:11.5px">${s.real ? '真实' : '示意'}</span></td>
+      <td><span class="lv lv-${s.level}">${s.status}</span></td>
+    </tr>`
+  ).join('');
+}
+
+function initPage() {
+  renderStations();
+  renderRealtime();
+  const map = { r24: 24, r72: 72, r168: 168 };
+  Object.keys(map).forEach((id) => {
+    document.getElementById('realtime-' + id).addEventListener('click', function () {
+      RT_RANGE = map[id];
+      renderRealtime();
+    });
+  });
+}
+  if (typeof initPage === 'function') initPage();
+};
+PAGE_INIT['indicators'] = function () {
+let IND_FILTER = 'all';
+
+function indCard(it) {
+  return `<div class="ind ${it.level}" data-group="${it.group}">
+    <div class="ind-title">${it.name}
+      <span class="lv lv-${it.level}">${it.level === 'red' ? '红色' : it.level === 'yellow' ? '黄色' : '正常'}</span>
+      <span class="chip ${it.real ? '' : 'chip-gold'}" style="font-size:11px">${it.real ? '真实数据' : '示意 / 待接入'}</span>
+    </div>
+    <div class="ind-val">${it.value}<small>${it.unit}</small></div>
+    <div class="ind-meta">
+      <div>历史分位：<b>${it.pct}</b></div>
+      <div>阈值：<b>${it.threshold}</b></div>
+      <div>更新频率：<b>${it.freq}</b></div>
+      <div>数据来源：<b>${it.source}</b></div>
+    </div>
+    <div class="ind-body">
+      <dl>
+        <dt>计算公式</dt><dd>${it.formula}</dd>
+        <dt>阈值依据</dt><dd>${it.basis}</dd>
+        <dt>触发动作</dt><dd>${it.action}</dd>
+      </dl>
+    </div>
+  </div>`;
+}
+
+function renderIndicators() {
+  const list = DEMO_INDICATORS.filter((it) => IND_FILTER === 'all' || it.group.indexOf(IND_FILTER) >= 0);
+  const grid = document.getElementById('indicators-ind-grid');
+  grid.innerHTML = list.map(indCard).join('');
+  grid.querySelectorAll('.ind').forEach((node) => {
+    node.addEventListener('click', () => node.classList.toggle('open'));
+  });
+  document.getElementById('indicators-filter-info').textContent =
+    IND_FILTER === 'all' ? '全部指标（共 ' + list.length + ' 项）' : IND_FILTER + '（' + list.length + ' 项）';
+}
+
+function initPage() {
+  document.getElementById('indicators-pheno').innerHTML = DEMO_PHENO.map(
+    (p) => `<div class="${p.now ? 'now' : ''}">${p.name}<div style="font-size:11.5px;font-weight:600;opacity:.8">${p.range}</div></div>`
+  ).join('');
+
+  document.getElementById('indicators-sum-total').innerHTML = DEMO_INDICATORS.length + '<small>项</small>';
+  document.getElementById('indicators-sum-red').innerHTML =
+    DEMO_INDICATORS.filter((x) => x.level === 'red').length + '<small>项</small>';
+  document.getElementById('indicators-sum-yellow').innerHTML =
+    DEMO_INDICATORS.filter((x) => x.level === 'yellow').length + '<small>项</small>';
+
+  renderIndicators();
+  document.querySelectorAll('[data-filter]').forEach((b) => {
+    b.addEventListener('click', function () {
+      IND_FILTER = b.getAttribute('data-filter');
+      document.querySelectorAll('[data-filter]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      renderIndicators();
+    });
+  });
+  document.querySelector('[data-filter="all"]').setAttribute('aria-pressed', 'true');
+}
+  if (typeof initPage === 'function') initPage();
+};
+PAGE_INIT['alert'] = function () {
+function initPage() {
+  const S = DEMO_SERIES;
+  renderAlerts('#alert-alerts', DEMO_ALERTS);
+
+  const slider = document.getElementById('alert-tcrit');
+  function recalc() {
+    const tcrit = parseFloat(slider.value);
+    const below = S.temp.filter((v) => v < tcrit);
+    const hours = below.length;
+    const acc = below.reduce((a, v) => a + (tcrit - v), 0);
+    const accR = Math.round(acc * 10) / 10;
+    const level = accR > 10 ? 'red' : accR > 3 ? 'yellow' : 'green';
+    const label = level === 'red' ? '红色预警' : level === 'yellow' ? '黄色关注' : '绿色正常';
+    document.getElementById('alert-tcrit-val').textContent = tcrit.toFixed(1) + '℃';
+    document.getElementById('alert-calc-hours').innerHTML = hours + '<small>小时</small>';
+    document.getElementById('alert-calc-acc').innerHTML = accR + '<small>℃·h</small>';
+    const el = document.getElementById('alert-calc-level');
+    el.innerHTML = `<span class="lv lv-${level}">${label}</span>`;
+  }
+  slider.addEventListener('input', recalc);
+  recalc();
+}
+  if (typeof initPage === 'function') initPage();
+};
+PAGE_INIT['forecast'] = function () {
+function initPage() {
+  const S = DEMO_SERIES;
+  const F = FORECAST_SAMPLE;
+
+  /* 时间轴曲线：真实历史事件 */
+  lineChart('#forecast-chart-timeline', {
+    title: '气温时间轴', height: 250, labels: S.dayLabels, unit: '℃',
+    series: [{ name: '宜君县气温', color: '#dc2626', values: S.temp, area: true }],
+    thresholds: [
+      { value: S.T_CRIT, color: '#7c5cd6', label: '冻害临界 ' + S.T_CRIT + '℃' },
+      { value: 0, color: '#0f6fbf', label: '0℃' },
+    ],
+  });
+
+  /* 实测样例：取未来 10 天 */
+  const d = F.daily;
+  const start = d.time.length - 10;
+  const rows = [];
+  let minV = 99, minAt = '';
+  for (let i = start; i < d.time.length; i++) {
+    if (d.tmin[i] < minV) { minV = d.tmin[i]; minAt = d.time[i]; }
+    const level = d.tmin[i] < 0 ? 'lv-red' : d.tmin[i] < 5 ? 'lv-yellow' : 'lv-green';
+    const hint = d.tmin[i] < 0 ? '低于 0℃' : d.tmin[i] < 5 ? '接近低温' : '安全';
+    rows.push(`<tr>
+      <td>${d.time[i]}</td>
+      <td class="num">${d.tmin[i]} ℃</td>
+      <td class="num">${d.tmax[i]} ℃</td>
+      <td class="num">${d.rain[i] != null ? d.rain[i] : 0} mm</td>
+      <td><span class="lv ${level}">${hint}</span></td>
+    </tr>`);
+  }
+  document.getElementById('forecast-fc-table').innerHTML = rows.join('');
+  document.getElementById('forecast-fc-min').innerHTML = minV + '<small>℃</small>';
+  document.getElementById('forecast-fc-min-at').textContent = '出现时间：' + minAt + '（' + F.site + '）';
+  document.getElementById('forecast-fc-fields').innerHTML = F.fields.length + '<small>类</small>';
+  document.getElementById('forecast-sample-note').textContent =
+    '取数时间 ' + F.fetchedAt + '｜' + F.source + '｜时区 ' + F.timezone + '｜海拔 ' + F.elevation + ' m';
+}
+  if (typeof initPage === 'function') initPage();
+};
+PAGE_INIT['history'] = function () {
+function initPage() {
+  const BT = BACKTEST;
+  const S = DEMO_SERIES;
+
+  const yj = BT.yijun, yt = BT.yintai;
+  const labels = BT.years.map((y) => String(y));
+  const harmful = yj.filter((r) => r.frostAcc > 3).length;
+  let worst = yj[0];
+  yj.forEach((r) => { if (r.frostAcc > worst.frostAcc) worst = r; });
+  const worstT = yt.find((r) => r.year === worst.year);
+
+  document.getElementById('history-bt-years').innerHTML = harmful + '<small>年</small>';
+  document.getElementById('history-bt-worst').innerHTML = worst.year + '<small>年</small>';
+  document.getElementById('history-bt-worst-foot').textContent =
+    `宜君县累积 ${worst.frostAcc} ℃·h（最低 ${worst.min}℃），印台区 ${worstT.frostAcc} ℃·h`;
+  document.getElementById('history-bt-gap').textContent = `${worst.frostAcc} vs ${worstT.frostAcc} ℃·h`;
+
+  groupedBarChart('#history-chart-years', {
+    title: '逐年冻害累积量', height: 300, labels, unit: ' ℃·h',
+    series: [
+      { name: '宜君县', color: '#dc2626', values: yj.map((r) => r.frostAcc) },
+      { name: '印台区', color: '#0f6fbf', values: yt.map((r) => r.frostAcc) },
+    ],
+    threshold: { value: 10, color: '#f59e0b', label: '红色阈值 10 ℃·h' },
+  });
+
+  document.getElementById('history-bt-table').innerHTML = yj.map((r, i) => {
+    const t = yt[i];
+    const cls = r.frostAcc > 10 ? 'lv-red' : r.frostAcc > 3 ? 'lv-yellow' : 'lv-green';
+    return `<tr>
+      <td><b>${r.year}</b></td>
+      <td class="num">${r.min} ℃</td>
+      <td class="num">${r.hoursBelowCrit} h</td>
+      <td class="num"><span class="lv ${cls}">${r.frostAcc} ℃·h</span></td>
+      <td class="num">${t.min} ℃</td>
+      <td class="num">${t.frostAcc} ℃·h</td>
+      <td>${r.worstDay}</td>
+    </tr>`;
+  }).join('');
+
+  lineChart('#history-chart-replay', {
+    title: '2025 年 3 月逐日最低气温', height: 250, labels: S.dayLabels, unit: '℃',
+    series: [
+      { name: '宜君县', color: '#dc2626', values: S.dailyMin, markEvery: 1 },
+      { name: '印台区', color: '#0f6fbf', values: S.compare.dailyMin, markEvery: 1 },
+    ],
+    thresholds: [{ value: S.T_CRIT, color: '#7c5cd6', label: '冻害临界 ' + S.T_CRIT + '℃' }],
+  });
+}
+  if (typeof initPage === 'function') initPage();
+};
+PAGE_INIT['data'] = function () {
+
+  if (typeof initPage === 'function') initPage();
+};
+PAGE_INIT['policy'] = function () {
+function initPage() {
+  groupedBarChart('#policy-chart-premium', {
+    title: '保费构成对比', height: 240, unit: ' 万元',
+    labels: ['宜君县尧生镇', '印台区红土镇'],
+    series: [
+      { name: '动态保费', color: '#0f6fbf', values: [3.44, 2.55] },
+      { name: '农户自缴', color: '#f59e0b', values: [1.03, 0.77] },
+    ],
+  });
+}
+  if (typeof initPage === 'function') initPage();
+};
+PAGE_INIT['credit'] = function () {
+
+  if (typeof initPage === 'function') initPage();
+};
+PAGE_INIT['claims'] = function () {
+
+  if (typeof initPage === 'function') initPage();
+};
+PAGE_INIT['about'] = function () {
+
+  if (typeof initPage === 'function') initPage();
+};
+
+var ROLE_HINTS = {
+  farmer: '果农视角：你会看到自家地块的天气提醒、保障状态与理赔进度，按钮更大、文字更少。',
+  officer: '客户经理视角：重点看预警工单、风险变化和授信建议，关注该联系哪一户。',
+  insurer: '保险公司视角：重点看指标触发、赔付测算与再保分层，关注该不该赔、赔多少。',
+  regulator: '监管视角：重点看全区风险分布、预警统计与保费补贴、风险补偿池使用情况。'
+};
+var CURRENT_VIEW = '';
+var DONE = {};
+
+function switchRole(role) {
+  document.querySelectorAll('[data-role-btn]').forEach(function (b) {
+    b.setAttribute('aria-pressed', String(b.getAttribute('data-role-btn') === role));
+  });
+  var box = document.getElementById('role-hint');
+  if (box) box.innerHTML = '<b>当前视角</b>　' + (ROLE_HINTS[role] || '');
+  document.querySelectorAll('.view.active [data-roles]').forEach(function (node) {
+    var allowed = node.getAttribute('data-roles').split(',');
+    node.classList.toggle('hidden', allowed.indexOf(role) === -1);
+  });
+}
+
+function show(key, push) {
+  if (!document.getElementById('view-' + key)) key = 'overview';
+  CURRENT_VIEW = key;
+  document.querySelectorAll('.view').forEach(function (v) {
+    v.classList.toggle('active', v.getAttribute('data-view') === key);
+  });
+  document.querySelectorAll('.nav-link').forEach(function (a) {
+    a.classList.toggle('active', a.getAttribute('data-nav') === key);
+  });
+  if (!DONE[key] && PAGE_INIT[key]) {
+    DONE[key] = true;
+    try { PAGE_INIT[key](); } catch (e) { console.error(key, e); }
+  }
+  if (push !== false && location.hash !== '#' + key) history.replaceState(null, '', '#' + key);
+  window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('[data-role-btn]').forEach(function (b) {
+  b.addEventListener('click', function () { switchRole(b.getAttribute('data-role-btn')); });
+});
+window.addEventListener('hashchange', function () { show((location.hash || '#overview').slice(1)); });
+switchRole('officer');
+show((location.hash || '#overview').slice(1), false);
+</script>
+</body>
+</html>
